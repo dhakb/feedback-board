@@ -1,6 +1,6 @@
-import { FeedBackRepository } from "../../domain/repositories/IFeedbackRepository";
+import { FeedbackRepository } from "../../domain/repositories/IFeedbackRepository";
 import { Feedback } from "../../domain/entities/Feedback";
-import {FeedbackServiceImpl} from "../FeedbackServiceImpl";
+import { FeedbackServiceImpl } from "../FeedbackServiceImpl";
 
 
 const mockFeedback: Feedback = {
@@ -15,7 +15,7 @@ const mockFeedback: Feedback = {
 };
 
 describe("FeedbackService", () => {
-  let feedbackRepository: jest.Mocked<FeedBackRepository>;
+  let feedbackRepository: jest.Mocked<FeedbackRepository>;
   let feedbackService: FeedbackServiceImpl;
 
   beforeEach(() => {
@@ -43,4 +43,24 @@ describe("FeedbackService", () => {
     expect(feedback.title).toBe("Dark mode");
     expect(feedback.authorId).toBe("user-1");
   });
+
+  it("should return feedback by ID", async () => {
+    const result = await feedbackService.findById("1");
+
+    expect(feedbackRepository.findById).toHaveBeenCalledWith("1");
+    expect(result?.id).toBe("1");
+  });
+
+  it("should return list of feedbacks", async () => {
+    const result = await feedbackService.list();
+
+    expect(feedbackRepository.list).toHaveBeenCalled();
+    expect(result).toHaveLength(1);
+  });
+
+  it("should upvote feedback", async () => {
+    await feedbackService.upvote("1");
+
+    expect(feedbackRepository.upvote).toHaveBeenCalledWith("1");
+  })
 });
