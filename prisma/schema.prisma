@@ -7,3 +7,49 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id           String     @id @default(uuid())
+  name         String
+  email        String     @unique
+  passwordHash String
+  role         Role       @default(USER)
+  feedbacks    Feedback[] @relation("UserFeedbacks")
+  comments     Comment[]  @relation("UserComments")
+  createdAt    DateTime   @default(now())
+}
+
+model Feedback {
+  id          String    @id @default(uuid())
+  title       String
+  description String
+  category    String
+  status      Status    @default(OPEN)
+  upvotes     Int       @default(0)
+  author      User      @relation("UserFeedbacks", fields: [authorId], references: [id])
+  authorId    String
+  comments    Comment[] @relation("FeedbackComments")
+  createdAt   DateTime  @default(now())
+}
+
+model Comment {
+  id         String   @id @default(uuid())
+  content    String
+  author     User     @relation("UserComments", fields: [authorId], references: [id])
+  authorId   String
+  feedback   Feedback @relation("FeedbackComments", fields: [feedbackId], references: [id])
+  feedbackId String
+  createdAt  DateTime @default(now())
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum Status {
+  OPEN
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+}
