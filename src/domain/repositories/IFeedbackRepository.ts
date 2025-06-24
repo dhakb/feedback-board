@@ -9,7 +9,7 @@ export interface CreateFeedbackDTO {
 }
 
 
-export interface FeedBackRepository {
+export interface FeedbackRepository {
   create(data: CreateFeedbackDTO): Promise<Feedback>;
 
   findById(id: string): Promise<Feedback | null>;
