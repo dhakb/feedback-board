@@ -21,8 +21,8 @@ describe("FeedbackService", () => {
   beforeEach(() => {
     feedbackRepository = {
       create: jest.fn().mockResolvedValue(mockFeedback),
-      findById: jest.fn(),
-      list: jest.fn(),
+      findById: jest.fn().mockResolvedValue(mockFeedback),
+      list: jest.fn().mockResolvedValue([mockFeedback]),
       upvote: jest.fn()
     };
 
@@ -31,10 +31,10 @@ describe("FeedbackService", () => {
 
   it("should create a feedback and return it", async () => {
     const input = {
-      title: "Dark mode",
-      description: "Add dark mode support",
-      category: "UI",
-      authorId: "user-1"
+      title: mockFeedback.title,
+      description: mockFeedback.description,
+      category: mockFeedback.category,
+      authorId: mockFeedback.authorId
     };
 
     const feedback = await feedbackService.createFeedback(input);
