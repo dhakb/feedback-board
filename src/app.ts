@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 
 import feedbackRoutes from "./routes/feedbackRoutes";
+import commentRoutes from "./routes/commentRoutes";
 
 
 dotenv.config();
@@ -18,6 +19,7 @@ app.get("/health", (_, res) => {
 });
 
 app.use("/feedback", feedbackRoutes);
+app.use("/comment", commentRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
