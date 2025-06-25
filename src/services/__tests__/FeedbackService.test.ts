@@ -1,4 +1,4 @@
-import { FeedbackRepository } from "../../domain/repositories/IFeedbackRepository";
+import { IFeedbackRepository } from "../../domain/repositories/IFeedbackRepository";
 import { Feedback } from "../../domain/entities/Feedback";
 import { FeedbackServiceImpl } from "../FeedbackServiceImpl";
 
@@ -15,7 +15,7 @@ const mockFeedback: Feedback = {
 };
 
 describe("FeedbackService", () => {
-  let feedbackRepository: jest.Mocked<FeedbackRepository>;
+  let feedbackRepository: jest.Mocked<IFeedbackRepository>;
   let feedbackService: FeedbackServiceImpl;
 
   beforeEach(() => {

@@ -1,11 +1,10 @@
 import { FeedbackService } from "./FeedbackService";
 import { Feedback } from "../domain/entities/Feedback";
-import { CreateFeedbackDTO, FeedBackRepository } from "../domain/repositories/IFeedbackRepository";
+import { CreateFeedbackDTO, IFeedbackRepository } from "../domain/repositories/IFeedbackRepository";
 
 
 export class FeedbackServiceImpl implements FeedbackService {
-  constructor(private readonly feedbackRepo: FeedBackRepository) {
-  }
+  constructor(private readonly feedbackRepo: IFeedbackRepository) {}
 
   async createFeedback(data: CreateFeedbackDTO): Promise<Feedback> {
     return await this.feedbackRepo.create(data);

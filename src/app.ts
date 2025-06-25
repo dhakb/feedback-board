@@ -1,6 +1,9 @@
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+
+import feedbackRoutes from "./routes/feedbackRoutes";
+
 
 dotenv.config();
 
@@ -10,9 +13,11 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 8080;
 
-app.get('/health', (_, res) => {
-  res.status(200).json({ message: 'API is healthy!' });
+app.get("/health", (_, res) => {
+  res.status(200).json({message: "API is healthy!"});
 });
+
+app.use("/feedback", feedbackRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

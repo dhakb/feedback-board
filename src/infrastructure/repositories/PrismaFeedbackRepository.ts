@@ -1,31 +1,32 @@
-import { PrismaClient } from '@prisma/client';
-import { FeedbackRepository, CreateFeedbackDTO } from '../../domain/repositories/IFeedbackRepository';
-import { Feedback } from '../../domain/entities/Feedback';
+import { PrismaClient } from "../../../generated/prisma";
+import { Feedback } from "../../domain/entities/Feedback";
+import { IFeedbackRepository, CreateFeedbackDTO } from "../../domain/repositories/IFeedbackRepository";
+
 
 const prisma = new PrismaClient();
 
-export class PrismaFeedbackRepository implements FeedbackRepository {
+export class PrismaFeedbackRepository implements IFeedbackRepository {
   async create(data: CreateFeedbackDTO): Promise<Feedback> {
     return prisma.feedback.create({
       data: {
         ...data,
-        status: 'OPEN',
-      },
+        status: "OPEN"
+      }
     });
   }
 
   async findById(id: string): Promise<Feedback | null> {
-    return prisma.feedback.findUnique({ where: { id } });
+    return prisma.feedback.findUnique({where: {id}});
   }
 
   async list(): Promise<Feedback[]> {
-    return prisma.feedback.findMany({ orderBy: { createdAt: 'desc' } });
+    return prisma.feedback.findMany({orderBy: {createdAt: "desc"}});
   }
 
   async upvote(id: string): Promise<void> {
     await prisma.feedback.update({
-      where: { id },
-      data: { upvotes: { increment: 1 } },
+      where: {id},
+      data: {upvotes: {increment: 1}}
     });
   }
 }
