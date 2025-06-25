@@ -7,8 +7,8 @@ export interface CreateCommentDTO {
   feedbackId: string;
 }
 
-export interface CommentRepository {
+export interface ICommentRepository {
   create(data: CreateCommentDTO): Promise<Comment>;
 
-  findByFeedback(feedbackId: string): Promise<Comment>;
+  findAllByFeedbackId(feedbackId: string): Promise<Comment[]>;
 }
