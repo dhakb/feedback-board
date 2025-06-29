@@ -8,7 +8,7 @@ export interface CreateUserDto {
   role?: "ADMIN" | "USER";
 }
 
-export interface UserRepository {
+export interface IUserRepository {
   create(data: CreateUserDto): Promise<User>;
 
   findByEmail(email: string): Promise<User | null>;
