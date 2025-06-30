@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { authenticate } from "../middleware/authenticate.middleware";
 import { CommentController } from "../controllers/CommentController";
 import { CommentServiceImpl } from "../services/CommentServiceImpl";
 import { PrismaCommentRepository } from "../infrastructure/repositories/PrismaCommentRepository";
@@ -11,8 +12,8 @@ const service = new CommentServiceImpl(repository);
 const controller = new CommentController(service);
 
 
-router.post("/", controller.create.bind(controller));
-router.get("/:feedbackId", controller.findAllCommentByFeedback.bind(controller));
+router.post("/", authenticate, controller.create.bind(controller));
+router.get("/:feedbackId", authenticate, controller.findAllCommentByFeedback.bind(controller));
 
 
 export default router;
