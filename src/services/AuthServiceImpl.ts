@@ -18,8 +18,7 @@ export class AuthServiceImpl implements IAuthService {
       throw new Error("Email already in use");
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await this.userRepo.create({name, email, passwordHash: hashedPassword});
+    const user = await this.userRepo.create({name, email, password});
 
     const {passwordHash, ...safeUser} = user;
     return safeUser;

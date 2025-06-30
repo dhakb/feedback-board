@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 
+import authRoutes from "./routes/authRoutes";
 import feedbackRoutes from "./routes/feedbackRoutes";
 import commentRoutes from "./routes/commentRoutes";
 
@@ -18,6 +19,7 @@ app.get("/health", (_, res) => {
   res.status(200).json({message: "API is healthy!"});
 });
 
+app.use("/auth", authRoutes);
 app.use("/feedback", feedbackRoutes);
 app.use("/comment", commentRoutes);
 

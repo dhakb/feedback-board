@@ -4,7 +4,7 @@ import { User } from "../entities/User";
 export interface CreateUserDto {
   name: string;
   email: string;
-  passwordHash: string;
+  password: string;
   role?: "ADMIN" | "USER";
 }
 
