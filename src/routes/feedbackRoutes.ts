@@ -1,5 +1,6 @@
 import { Router } from "express";
-import {authenticate} from "../middleware/authenticate.middleware";
+import { authenticate } from "../middleware/authenticate.middleware";
+import { authorizeAdmin } from "../middleware/authorizeAdmin.middleware";
 import { FeedbackController } from "../controllers/FeedbackController";
 import { FeedbackServiceImpl } from "../services/FeedbackServiceImpl";
 import { PrismaFeedbackRepository } from "../infrastructure/repositories/PrismaFeedbackRepository";
@@ -15,5 +16,8 @@ router.get("/", authenticate, controller.list.bind(controller));
 router.get("/:id", authenticate, controller.getById.bind(controller));
 router.post("/:id/upvote", authenticate, controller.upvote.bind(controller));
 router.delete("/:id", authenticate, controller.delete.bind(controller));
+router.patch("/:id", authenticate, controller.updateFeedbackByUser.bind(controller));
+router.patch("/:id/status", authenticate, authorizeAdmin, controller.updateFeedbackStatusByAdmin.bind(controller));
+
 
 export default router;

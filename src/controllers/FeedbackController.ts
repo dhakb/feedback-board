@@ -41,4 +41,21 @@ export class FeedbackController {
     await this.service.delete(feedbackId, userId, role);
     res.status(204).send();
   }
+
+  async updateFeedbackByUser(req: AuthRequest, res: Response) {
+    const data = req.body;
+    const feedbackId = req.params.id;
+    const userId = req.user!.userId;
+
+    const feedback = await this.service.updateFeedbackByUser(feedbackId, userId, data);
+    res.status(200).json(feedback);
+  }
+
+  async updateFeedbackStatusByAdmin(req: AuthRequest, res: Response) {
+    const {id: feedbackId} = req.params;
+    const {status} = req.body;
+
+    const feedback = await this.service.updateFeedBackStatusByAdmin(feedbackId, status);
+    res.status(200).json(feedback);
+  }
 }

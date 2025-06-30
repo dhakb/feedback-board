@@ -16,5 +16,5 @@ export interface FeedbackService {
 
   updateFeedbackByUser(feedbackId: string, userId: string, data: Omit<UpdateFeedbackDTO, "status">): Promise<Feedback>;
 
-  updateFeedBackStatusByAdmin(feedbackId: string, status: FeedbackStatus, role: Role): Promise<Feedback>;
+  updateFeedBackStatusByAdmin(feedbackId: string, status: FeedbackStatus): Promise<Feedback>;
 }

@@ -55,14 +55,10 @@ export class FeedbackServiceImpl implements FeedbackService {
     return await this.feedbackRepo.update(feedbackId, data);
   }
 
-  async updateFeedBackStatusByAdmin(feedbackId: string, status: FeedbackStatus, role: Role): Promise<Feedback> {
+  async updateFeedBackStatusByAdmin(feedbackId: string, status: FeedbackStatus): Promise<Feedback> {
     const feedback = await this.feedbackRepo.findById(feedbackId);
     if (!feedback) {
       throw new NotFoundError("Feedback not found");
-    }
-
-    if (role !== "ADMIN") {
-      throw new ForbiddenError("Not allowed to update this feedback");
     }
 
     return await this.feedbackRepo.update(feedbackId, {status});
