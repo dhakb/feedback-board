@@ -8,6 +8,7 @@ dotenv.config();
 import authRoutes from "./routes/authRoutes";
 import feedbackRoutes from "./routes/feedbackRoutes";
 import commentRoutes from "./routes/commentRoutes";
+import { errorHandler } from "./middleware/errorHandler";
 
 
 const app = express();
@@ -23,6 +24,8 @@ app.get("/health", (_, res) => {
 app.use("/auth", authRoutes);
 app.use("/feedback", feedbackRoutes);
 app.use("/comment", commentRoutes);
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
