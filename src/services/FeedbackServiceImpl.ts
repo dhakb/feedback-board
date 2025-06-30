@@ -1,10 +1,12 @@
 import { FeedbackService } from "./FeedbackService";
 import { Feedback } from "../domain/entities/Feedback";
 import { CreateFeedbackDTO, IFeedbackRepository } from "../domain/repositories/IFeedbackRepository";
+import { Role } from "../domain/entities/User";
 
 
 export class FeedbackServiceImpl implements FeedbackService {
-  constructor(private readonly feedbackRepo: IFeedbackRepository) {}
+  constructor(private readonly feedbackRepo: IFeedbackRepository) {
+  }
 
   async createFeedback(data: CreateFeedbackDTO): Promise<Feedback> {
     return await this.feedbackRepo.create(data);
@@ -22,7 +24,19 @@ export class FeedbackServiceImpl implements FeedbackService {
     return await this.feedbackRepo.upvote(id);
   }
 
-  async delete(id: string): Promise<void> {
-    return await this.feedbackRepo.delete(id);
+  async delete(feedbackId: string, userId: string, role: Role): Promise<void> {
+    const feedback = await this.feedbackRepo.findById(feedbackId);
+    if(!feedback) {
+      throw new Error("Feedback not found")
+    }
+
+    const isAuthor = feedback.authorId === userId;
+    const isAdmin = role === "ADMIN";
+
+    if (!isAuthor && !isAdmin) {
+      throw new Error('Not allowed to delete this feedback');
+    }
+
+    return await this.feedbackRepo.delete(feedbackId);
   }
 }

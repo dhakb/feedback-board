@@ -1,3 +1,4 @@
+import { Role } from "../domain/entities/User";
 import { Feedback } from "../domain/entities/Feedback";
 import { CreateFeedbackDTO } from "../domain/repositories/IFeedbackRepository";
 
@@ -11,5 +12,5 @@ export interface FeedbackService {
 
   upvote(id: string): Promise<void>;
 
-  delete(id: string): Promise<void>;
+  delete(feedbackId: string, userId: string, role: Role): Promise<void>;
 }

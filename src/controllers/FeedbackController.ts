@@ -1,9 +1,12 @@
 import { Request, Response } from "express";
 import { FeedbackService } from "../services/FeedbackService";
+import { AuthRequest } from "../middleware/authenticate.middleware";
+import type {Role} from "../domain/entities/User";
 
 
 export class FeedbackController {
-  constructor(private readonly service: FeedbackService) {}
+  constructor(private readonly service: FeedbackService) {
+  }
 
   async create(req: Request, res: Response) {
     const {title, description, category, authorId} = req.body;
@@ -30,8 +33,12 @@ export class FeedbackController {
     res.status(204).send();
   }
 
-  async delete(req: Request, res: Response) {
-    await this.service.delete(req.params.id);
+  async delete(req: AuthRequest, res: Response) {
+    const feedbackId = req.params.id;
+    const userId = req.user?.userId || ""
+    const role = req.user?.role as Role || ""
+
+    await this.service.delete(feedbackId, userId, role);
     res.status(204).send();
   }
 }

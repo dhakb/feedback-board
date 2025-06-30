@@ -66,7 +66,7 @@ describe("FeedbackService", () => {
   });
 
   it("should delete feedback", async () => {
-    await feedbackService.delete("1");
+    await feedbackService.delete("1", "user-1", "USER");
 
     expect(feedbackRepository.delete).toHaveBeenCalledWith("1");
   });
