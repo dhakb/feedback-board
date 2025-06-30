@@ -1,6 +1,7 @@
 import { IFeedbackRepository } from "../../domain/repositories/IFeedbackRepository";
 import { Feedback } from "../../domain/entities/Feedback";
 import { FeedbackServiceImpl } from "../FeedbackServiceImpl";
+import { ForbiddenError } from "../../errors/ApiError";
 
 
 const mockFeedback: Feedback = {
@@ -65,9 +66,23 @@ describe("FeedbackService", () => {
     expect(feedbackRepository.upvote).toHaveBeenCalledWith("1");
   });
 
-  it("should delete feedback", async () => {
-    await feedbackService.delete("1", "user-1", "USER");
+  describe("FeedbackService.delete", () => {
+    it("should allow the author to delete their feedback", async () => {
+      await feedbackService.delete("1", "user-1", "USER");
 
-    expect(feedbackRepository.delete).toHaveBeenCalledWith("1");
+      expect(feedbackRepository.delete).toHaveBeenCalledWith("1");
+    });
+
+    it("should allow the admin to delete any feedback", async () => {
+      await feedbackService.delete("1", "admin-1", "ADMIN");
+
+      expect(feedbackRepository.delete).toHaveBeenCalledWith("1");
+    });
+
+    it("should throw if non-author and non-admin tries to delete feedback", async () => {
+      await expect(feedbackService.delete("1", "unauthorized-user", "USER")).rejects.toThrow(ForbiddenError);
+
+      expect(feedbackRepository.delete).not.toHaveBeenCalled();
+    });
   });
 });
