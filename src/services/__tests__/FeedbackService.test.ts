@@ -109,7 +109,7 @@ describe("FeedbackService", () => {
     it("should allow the admin to update any feedback status", async () => {
       feedbackRepository.update.mockReset();
       feedbackRepository.update.mockResolvedValue({...mockFeedback, status: "COMPLETED"});
-      const feedback = await feedbackService.updateFeedBackStatusByAdmin("1", "COMPLETED", "ADMIN");
+      const feedback = await feedbackService.updateFeedBackStatusByAdmin("1", "COMPLETED");
 
       expect(feedbackRepository.update).toHaveBeenCalledWith("1", {status: "COMPLETED"});
       expect(feedback.status).toBe("COMPLETED");
