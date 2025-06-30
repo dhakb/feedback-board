@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { FeedbackService } from "../services/FeedbackService";
 import { AuthRequest } from "../middleware/authenticate.middleware";
-import type {Role} from "../domain/entities/User";
+import type { Role } from "../domain/entities/User";
 
 
 export class FeedbackController {
@@ -35,8 +35,8 @@ export class FeedbackController {
 
   async delete(req: AuthRequest, res: Response) {
     const feedbackId = req.params.id;
-    const userId = req.user?.userId || ""
-    const role = req.user?.role as Role || ""
+    const userId = req.user?.userId || "";
+    const role = req.user?.role as Role || "";
 
     await this.service.delete(feedbackId, userId, role);
     res.status(204).send();

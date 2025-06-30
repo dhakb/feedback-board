@@ -2,6 +2,7 @@ import { FeedbackService } from "./FeedbackService";
 import { Feedback } from "../domain/entities/Feedback";
 import { CreateFeedbackDTO, IFeedbackRepository } from "../domain/repositories/IFeedbackRepository";
 import { Role } from "../domain/entities/User";
+import { ForbiddenError, NotFoundError } from "../errors/ApiError";
 
 
 export class FeedbackServiceImpl implements FeedbackService {
@@ -26,15 +27,15 @@ export class FeedbackServiceImpl implements FeedbackService {
 
   async delete(feedbackId: string, userId: string, role: Role): Promise<void> {
     const feedback = await this.feedbackRepo.findById(feedbackId);
-    if(!feedback) {
-      throw new Error("Feedback not found")
+    if (!feedback) {
+      throw new NotFoundError("Feedback not found");
     }
 
     const isAuthor = feedback.authorId === userId;
     const isAdmin = role === "ADMIN";
 
     if (!isAuthor && !isAdmin) {
-      throw new Error('Not allowed to delete this feedback');
+      throw new ForbiddenError("Not allowed to delete this feedback");
     }
 
     return await this.feedbackRepo.delete(feedbackId);
