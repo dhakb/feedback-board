@@ -29,4 +29,8 @@ export class PrismaFeedbackRepository implements IFeedbackRepository {
       data: {upvotes: {increment: 1}}
     });
   }
+
+  async delete(id: string): Promise<void> {
+    await prisma.feedback.delete({where: {id}});
+  }
 }

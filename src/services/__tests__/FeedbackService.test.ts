@@ -23,7 +23,8 @@ describe("FeedbackService", () => {
       create: jest.fn().mockResolvedValue(mockFeedback),
       findById: jest.fn().mockResolvedValue(mockFeedback),
       list: jest.fn().mockResolvedValue([mockFeedback]),
-      upvote: jest.fn()
+      upvote: jest.fn(),
+      delete: jest.fn()
     };
 
     feedbackService = new FeedbackServiceImpl(feedbackRepository);
@@ -62,5 +63,11 @@ describe("FeedbackService", () => {
     await feedbackService.upvote("1");
 
     expect(feedbackRepository.upvote).toHaveBeenCalledWith("1");
-  })
+  });
+
+  it("should delete feedback", async () => {
+    await feedbackService.delete("1");
+
+    expect(feedbackRepository.delete).toHaveBeenCalledWith("1");
+  });
 });

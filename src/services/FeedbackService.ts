@@ -10,4 +10,6 @@ export interface FeedbackService {
   list(): Promise<Feedback[]>;
 
   upvote(id: string): Promise<void>;
+
+  delete(id: string): Promise<void>;
 }
