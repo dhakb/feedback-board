@@ -25,7 +25,8 @@ describe("FeedbackService", () => {
       findById: jest.fn().mockResolvedValue(mockFeedback),
       list: jest.fn().mockResolvedValue([mockFeedback]),
       upvote: jest.fn(),
-      delete: jest.fn()
+      delete: jest.fn(),
+      update: jest.fn().mockResolvedValue(mockFeedback)
     };
 
     feedbackService = new FeedbackServiceImpl(feedbackRepository);
@@ -83,6 +84,35 @@ describe("FeedbackService", () => {
       await expect(feedbackService.delete("1", "unauthorized-user", "USER")).rejects.toThrow(ForbiddenError);
 
       expect(feedbackRepository.delete).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("FeedbackService.update", () => {
+    it("should allow the author to update their feedback partially", async () => {
+      const input = {
+        title: "updated title",
+        description: "updated description",
+        category: "updated category"
+      };
+
+      feedbackRepository.update.mockReset();
+      feedbackRepository.update.mockResolvedValue({...mockFeedback, ...input});
+
+      const feedback = await feedbackService.updateFeedbackByUser("1", "user-1", input);
+
+      expect(feedbackRepository.update).toHaveBeenCalledWith("1", input);
+      expect(feedback.title).toBe("updated title");
+      expect(feedback.description).toBe("updated description");
+      expect(feedback.category).toBe("updated category");
+    });
+
+    it("should allow the admin to update any feedback status", async () => {
+      feedbackRepository.update.mockReset();
+      feedbackRepository.update.mockResolvedValue({...mockFeedback, status: "COMPLETED"});
+      const feedback = await feedbackService.updateFeedBackStatusByAdmin("1", "COMPLETED", "ADMIN");
+
+      expect(feedbackRepository.update).toHaveBeenCalledWith("1", {status: "COMPLETED"});
+      expect(feedback.status).toBe("COMPLETED");
     });
   });
 });

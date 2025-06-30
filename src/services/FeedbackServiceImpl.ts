@@ -1,6 +1,6 @@
 import { FeedbackService } from "./FeedbackService";
-import { Feedback } from "../domain/entities/Feedback";
-import { CreateFeedbackDTO, IFeedbackRepository } from "../domain/repositories/IFeedbackRepository";
+import { Feedback, FeedbackStatus } from "../domain/entities/Feedback";
+import { CreateFeedbackDTO, UpdateFeedbackDTO, IFeedbackRepository } from "../domain/repositories/IFeedbackRepository";
 import { Role } from "../domain/entities/User";
 import { ForbiddenError, NotFoundError } from "../errors/ApiError";
 
@@ -39,5 +39,32 @@ export class FeedbackServiceImpl implements FeedbackService {
     }
 
     return await this.feedbackRepo.delete(feedbackId);
+  }
+
+  async updateFeedbackByUser(feedbackId: string, userId: string, data: Omit<UpdateFeedbackDTO, "status">): Promise<Feedback> {
+    const feedback = await this.feedbackRepo.findById(feedbackId);
+    if (!feedback) {
+      throw new NotFoundError("Feedback not found");
+    }
+
+    const isAuthor = feedback.authorId === userId;
+    if (!isAuthor) {
+      throw new ForbiddenError("Not allowed to update this feedback");
+    }
+
+    return await this.feedbackRepo.update(feedbackId, data);
+  }
+
+  async updateFeedBackStatusByAdmin(feedbackId: string, status: FeedbackStatus, role: Role): Promise<Feedback> {
+    const feedback = await this.feedbackRepo.findById(feedbackId);
+    if (!feedback) {
+      throw new NotFoundError("Feedback not found");
+    }
+
+    if (role !== "ADMIN") {
+      throw new ForbiddenError("Not allowed to update this feedback");
+    }
+
+    return await this.feedbackRepo.update(feedbackId, {status});
   }
 }

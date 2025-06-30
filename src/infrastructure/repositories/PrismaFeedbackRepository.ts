@@ -1,6 +1,10 @@
 import { PrismaClient } from "../../../generated/prisma";
 import { Feedback } from "../../domain/entities/Feedback";
-import { IFeedbackRepository, CreateFeedbackDTO } from "../../domain/repositories/IFeedbackRepository";
+import {
+  IFeedbackRepository,
+  CreateFeedbackDTO,
+  UpdateFeedbackDTO
+} from "../../domain/repositories/IFeedbackRepository";
 
 
 const prisma = new PrismaClient();
@@ -32,5 +36,9 @@ export class PrismaFeedbackRepository implements IFeedbackRepository {
 
   async delete(id: string): Promise<void> {
     await prisma.feedback.delete({where: {id}});
+  }
+
+  async update(id: string, data: UpdateFeedbackDTO): Promise<Feedback> {
+    return prisma.feedback.update({where: {id}, data});
   }
 }

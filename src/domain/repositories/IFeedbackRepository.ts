@@ -1,4 +1,4 @@
-import type { Feedback } from "../entities/Feedback";
+import type { Feedback, FeedbackStatus } from "../entities/Feedback";
 
 
 export interface CreateFeedbackDTO {
@@ -6,6 +6,13 @@ export interface CreateFeedbackDTO {
   description: string,
   category: string,
   authorId: string
+}
+
+export interface UpdateFeedbackDTO {
+  title: string
+  description: string,
+  category: string,
+  status: FeedbackStatus
 }
 
 
@@ -18,5 +25,7 @@ export interface IFeedbackRepository {
 
   upvote(id: string): Promise<void>;
 
-  delete(id: string): Promise<void>
+  delete(id: string): Promise<void>;
+
+  update(id: string, data: Partial<UpdateFeedbackDTO>): Promise<Feedback>;
 }

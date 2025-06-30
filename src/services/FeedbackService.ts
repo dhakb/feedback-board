@@ -1,6 +1,6 @@
 import { Role } from "../domain/entities/User";
-import { Feedback } from "../domain/entities/Feedback";
-import { CreateFeedbackDTO } from "../domain/repositories/IFeedbackRepository";
+import { Feedback, FeedbackStatus } from "../domain/entities/Feedback";
+import { CreateFeedbackDTO, UpdateFeedbackDTO } from "../domain/repositories/IFeedbackRepository";
 
 
 export interface FeedbackService {
@@ -13,4 +13,8 @@ export interface FeedbackService {
   upvote(id: string): Promise<void>;
 
   delete(feedbackId: string, userId: string, role: Role): Promise<void>;
+
+  updateFeedbackByUser(feedbackId: string, userId: string, data: Omit<UpdateFeedbackDTO, "status">): Promise<Feedback>;
+
+  updateFeedBackStatusByAdmin(feedbackId: string, status: FeedbackStatus, role: Role): Promise<Feedback>;
 }
