@@ -21,11 +21,7 @@ export class FeedbackController {
 
   async getById(req: Request, res: Response) {
     const feedback = await this.service.findById(req.params.id);
-    if (!feedback) {
-      res.status(404).json({error: "Not found"});
-      return;
-    }
-    res.json(feedback);
+    res.status(200).json(feedback);
   }
 
   async upvote(req: Request, res: Response) {

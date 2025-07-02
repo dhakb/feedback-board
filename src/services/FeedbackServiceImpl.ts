@@ -14,6 +14,11 @@ export class FeedbackServiceImpl implements FeedbackService {
   }
 
   async findById(id: string): Promise<Feedback | null> {
+    const feedback = await this.feedbackRepo.findById(id);
+    if (!feedback) {
+      throw new NotFoundError("Feedback with given ID not found");
+    }
+
     return await this.feedbackRepo.findById(id);
   }
 
