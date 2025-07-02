@@ -9,10 +9,10 @@ export interface CreateFeedbackDTO {
 }
 
 export interface UpdateFeedbackDTO {
-  title: string
-  description: string,
-  category: string,
-  status: FeedbackStatus
+  title?: string
+  description?: string,
+  category?: string,
+  status?: FeedbackStatus
 }
 
 
