@@ -42,6 +42,13 @@ export class FeedbackServiceImpl implements FeedbackService {
   }
 
   async updateFeedbackByUser(feedbackId: string, userId: string, data: Omit<UpdateFeedbackDTO, "status">): Promise<Feedback> {
+    const ALLOWED_FIELDS: (keyof UpdateFeedbackDTO)[] = ["title", "description", "category"];
+    const invalidFields = Object.keys(data).filter((key) => !ALLOWED_FIELDS.includes(key as keyof UpdateFeedbackDTO));
+
+    if (invalidFields.length > 0) {
+      throw new ForbiddenError(`Not allowed to update: ${invalidFields.join((", "))}`);
+    }
+
     const feedback = await this.feedbackRepo.findById(feedbackId);
     if (!feedback) {
       throw new NotFoundError("Feedback not found");

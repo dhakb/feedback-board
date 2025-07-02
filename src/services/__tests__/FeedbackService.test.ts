@@ -1,4 +1,4 @@
-import { IFeedbackRepository } from "../../domain/repositories/IFeedbackRepository";
+import { IFeedbackRepository, UpdateFeedbackDTO } from "../../domain/repositories/IFeedbackRepository";
 import { Feedback } from "../../domain/entities/Feedback";
 import { FeedbackServiceImpl } from "../FeedbackServiceImpl";
 import { ForbiddenError } from "../../errors/ApiError";
@@ -105,6 +105,31 @@ describe("FeedbackService", () => {
       expect(feedback.description).toBe("Updated Description");
       expect(feedback.category).toBe("Updated Category");
     });
+
+    it("should prevent the author to update status of the feedback", async () => {
+      const input: UpdateFeedbackDTO = {
+        status: "COMPLETED"
+      };
+
+      await expect(feedbackService.updateFeedbackByUser("feedback-1", "user-1", input)).rejects.toThrow(ForbiddenError);
+      expect(feedbackRepository.update).not.toHaveBeenCalled();
+    });
+
+    it("should prevent the author to update not allowed fields of the feedback", async () => {
+      const input = {
+        upvotes: 20,
+        authorId: "user-2",
+        id: "feedback-2",
+        createAt: "2025-06-30T00:00:00.000Z"
+      } as UpdateFeedbackDTO
+
+      const invalidFields = Object.keys(input);
+
+      await expect(feedbackService.updateFeedbackByUser("feedback-1", "user-1", input)).rejects.toThrow(ForbiddenError);
+      await expect(feedbackService.updateFeedbackByUser("feedback-1", "user-1", input)).rejects.toThrow(`Not allowed to update: ${invalidFields.join((", "))}`)
+
+      expect(feedbackRepository.update).not.toHaveBeenCalled();
+    })
 
     it("should allow the admin to update any feedback status", async () => {
       feedbackRepository.update.mockReset();
