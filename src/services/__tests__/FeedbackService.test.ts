@@ -5,7 +5,7 @@ import { ForbiddenError } from "../../errors/ApiError";
 
 
 const mockFeedback: Feedback = {
-  id: "1",
+  id: "feedback-1",
   title: "Dark mode",
   description: "Add dark mode support",
   category: "UI",
@@ -48,10 +48,10 @@ describe("FeedbackService", () => {
   });
 
   it("should return feedback by ID", async () => {
-    const result = await feedbackService.findById("1");
+    const result = await feedbackService.findById("feedback-1");
 
-    expect(feedbackRepository.findById).toHaveBeenCalledWith("1");
-    expect(result?.id).toBe("1");
+    expect(feedbackRepository.findById).toHaveBeenCalledWith("feedback-1");
+    expect(result?.id).toBe("feedback-1");
   });
 
   it("should return list of feedbacks", async () => {
@@ -62,26 +62,26 @@ describe("FeedbackService", () => {
   });
 
   it("should upvote feedback", async () => {
-    await feedbackService.upvote("1");
+    await feedbackService.upvote("feedback-1");
 
-    expect(feedbackRepository.upvote).toHaveBeenCalledWith("1");
+    expect(feedbackRepository.upvote).toHaveBeenCalledWith("feedback-1");
   });
 
   describe("FeedbackService.delete", () => {
     it("should allow the author to delete their feedback", async () => {
-      await feedbackService.delete("1", "user-1", "USER");
+      await feedbackService.delete("feedback-1", "user-1", "USER");
 
-      expect(feedbackRepository.delete).toHaveBeenCalledWith("1");
+      expect(feedbackRepository.delete).toHaveBeenCalledWith("feedback-1");
     });
 
     it("should allow the admin to delete any feedback", async () => {
-      await feedbackService.delete("1", "admin-1", "ADMIN");
+      await feedbackService.delete("feedback-1", "admin-1", "ADMIN");
 
-      expect(feedbackRepository.delete).toHaveBeenCalledWith("1");
+      expect(feedbackRepository.delete).toHaveBeenCalledWith("feedback-1");
     });
 
     it("should throw if non-author and non-admin tries to delete feedback", async () => {
-      await expect(feedbackService.delete("1", "unauthorized-user", "USER")).rejects.toThrow(ForbiddenError);
+      await expect(feedbackService.delete("feedback-1", "unauthorized-user", "USER")).rejects.toThrow(ForbiddenError);
 
       expect(feedbackRepository.delete).not.toHaveBeenCalled();
     });
@@ -90,28 +90,28 @@ describe("FeedbackService", () => {
   describe("FeedbackService.update", () => {
     it("should allow the author to update their feedback partially", async () => {
       const input = {
-        title: "updated title",
-        description: "updated description",
-        category: "updated category"
+        title: "Updated Title",
+        description: "Updated Description",
+        category: "Updated Category"
       };
 
       feedbackRepository.update.mockReset();
       feedbackRepository.update.mockResolvedValue({...mockFeedback, ...input});
 
-      const feedback = await feedbackService.updateFeedbackByUser("1", "user-1", input);
+      const feedback = await feedbackService.updateFeedbackByUser("feedback-1", "user-1", input);
 
-      expect(feedbackRepository.update).toHaveBeenCalledWith("1", input);
-      expect(feedback.title).toBe("updated title");
-      expect(feedback.description).toBe("updated description");
-      expect(feedback.category).toBe("updated category");
+      expect(feedbackRepository.update).toHaveBeenCalledWith("feedback-1", input);
+      expect(feedback.title).toBe("Updated Title");
+      expect(feedback.description).toBe("Updated Description");
+      expect(feedback.category).toBe("Updated Category");
     });
 
     it("should allow the admin to update any feedback status", async () => {
       feedbackRepository.update.mockReset();
       feedbackRepository.update.mockResolvedValue({...mockFeedback, status: "COMPLETED"});
-      const feedback = await feedbackService.updateFeedBackStatusByAdmin("1", "COMPLETED");
+      const feedback = await feedbackService.updateFeedBackStatusByAdmin("feedback-1", "COMPLETED");
 
-      expect(feedbackRepository.update).toHaveBeenCalledWith("1", {status: "COMPLETED"});
+      expect(feedbackRepository.update).toHaveBeenCalledWith("feedback-1", {status: "COMPLETED"});
       expect(feedback.status).toBe("COMPLETED");
     });
   });
