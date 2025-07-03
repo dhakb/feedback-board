@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import { User } from "../../domain/entities/User";
 import { PrismaClient } from "../../../generated/prisma";
-import { CreateUserDto, IUserRepository } from "../../domain/repositories/IUserRepository";
+import { CreateUserDto, IUserRepository, UpdateUserProfileDTO } from "../../domain/repositories/IUserRepository";
 
 
 const prisma = new PrismaClient();
@@ -24,7 +24,15 @@ export class PrismaUserRepository implements IUserRepository {
     return prisma.user.findUnique({where: {email}});
   }
 
-  findById(id: string): Promise<User | null> {
+  async findById(id: string): Promise<User | null> {
     return prisma.user.findUnique({where: {id}});
+  }
+
+  async update(email: string, data: Partial<UpdateUserProfileDTO>): Promise<User> {
+    return prisma.user.update({where: {email}, data: {...data}});
+  }
+
+  async delete(email: string): Promise<User> {
+    return prisma.user.delete({where: {email}});
   }
 }

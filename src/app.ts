@@ -9,6 +9,7 @@ import authRoutes from "./routes/authRoutes";
 import feedbackRoutes from "./routes/feedbackRoutes";
 import commentRoutes from "./routes/commentRoutes";
 import { errorHandler } from "./middleware/errorHandler";
+import userRoutes from "./routes/userRoutes";
 
 
 const app = express();
@@ -24,6 +25,7 @@ app.get("/health", (_, res) => {
 app.use("/auth", authRoutes);
 app.use("/feedback", feedbackRoutes);
 app.use("/comment", commentRoutes);
+app.use("/user", userRoutes);
 
 app.use(errorHandler);
 
