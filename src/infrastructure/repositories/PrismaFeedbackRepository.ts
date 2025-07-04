@@ -27,7 +27,7 @@ export class PrismaFeedbackRepository implements IFeedbackRepository {
     return prisma.feedback.findMany({orderBy: {createdAt: "desc"}});
   }
 
-  async upvote(id: string): Promise<void> {
+  async incrementUpvotes(id: string): Promise<void> {
     await prisma.feedback.update({
       where: {id},
       data: {upvotes: {increment: 1}}

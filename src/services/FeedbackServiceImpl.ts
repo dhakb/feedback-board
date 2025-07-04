@@ -35,7 +35,7 @@ export class FeedbackServiceImpl implements FeedbackService {
 
     await this.feedbackVoteRepo.create(userId, feedbackId);
 
-    return await this.feedbackRepo.upvote(feedbackId);
+    return await this.feedbackRepo.incrementUpvotes(feedbackId);
   }
 
   async delete(feedbackId: string, userId: string, role: Role): Promise<void> {

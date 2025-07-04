@@ -23,7 +23,7 @@ export interface IFeedbackRepository {
 
   list(): Promise<Feedback[]>;
 
-  upvote(id: string): Promise<void>;
+  incrementUpvotes(id: string): Promise<void>;
 
   delete(id: string): Promise<void>;
 
