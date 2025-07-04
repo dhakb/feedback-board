@@ -2,7 +2,7 @@ import { FeedbackService } from "./FeedbackService";
 import { Feedback, FeedbackStatus } from "../domain/entities/Feedback";
 import { CreateFeedbackDTO, UpdateFeedbackDTO, IFeedbackRepository } from "../domain/repositories/IFeedbackRepository";
 import { Role } from "../domain/entities/User";
-import { ForbiddenError, NotFoundError } from "../errors/ApiError";
+import { BadRequestError, ForbiddenError, NotFoundError } from "../errors/ApiError";
 import { IFeedbackVoteRepository } from "../domain/repositories/IFeedbackVoteRepository";
 
 
@@ -28,6 +28,11 @@ export class FeedbackServiceImpl implements FeedbackService {
   }
 
   async upvote(userId: string, feedbackId: string): Promise<void> {
+    const feedback = await this.feedbackRepo.findById(feedbackId);
+    if (!feedback) {
+      throw new BadRequestError("Feedback with given ID doesn't exist");
+    }
+
     const existingUpvote = await this.feedbackVoteRepo.find(userId, feedbackId);
     if (existingUpvote) {
       throw new ForbiddenError("You've already upvoted this feedback");
