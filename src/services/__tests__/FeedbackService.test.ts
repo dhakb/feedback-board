@@ -1,7 +1,7 @@
 import { IFeedbackRepository, UpdateFeedbackDTO } from "../../domain/repositories/IFeedbackRepository";
 import { Feedback } from "../../domain/entities/Feedback";
 import { FeedbackServiceImpl } from "../FeedbackServiceImpl";
-import { ForbiddenError } from "../../errors/ApiError";
+import { BadRequestError, ForbiddenError } from "../../errors/ApiError";
 import { IFeedbackVoteRepository } from "../../domain/repositories/IFeedbackVoteRepository";
 
 
@@ -62,17 +62,31 @@ describe("FeedbackService", () => {
     expect(result?.id).toBe("feedback-1");
   });
 
-  it("should return list of feedbacks", async () => {
-    const result = await feedbackService.list();
+  describe("FeedbackService.upvote", () => {
+    it("should upvote feedback if user hasn’t voted yet", async () => {
+      await feedbackService.upvote("user-1", "feedback-1");
 
-    expect(feedbackRepository.list).toHaveBeenCalled();
-    expect(result).toHaveLength(1);
-  });
+      expect(feedbackVoteRepository.find).toHaveBeenCalledWith("user-1", "feedback-1");
+      expect(feedbackVoteRepository.create).toHaveBeenCalledWith("user-1", "feedback-1");
+      expect(feedbackRepository.incrementUpvotes).toHaveBeenCalledWith("feedback-1");
+    });
 
-  it("should upvote feedback", async () => {
-    await feedbackService.upvote("user-1", "feedback-1");
+    it("should throw ForbiddenError if user already voted", async () => {
+      feedbackVoteRepository.find.mockResolvedValue({userId: "user-1", feedbackId: "feedbackId", createdAt: new Date()})
 
-    expect(feedbackRepository.incrementUpvotes).toHaveBeenCalledWith("feedback-1");
+      await expect(feedbackService.upvote("user-1", "feedback-1")).rejects.toThrow(ForbiddenError);
+
+      expect(feedbackVoteRepository.create).not.toHaveBeenCalled();
+      expect(feedbackRepository.incrementUpvotes).not.toHaveBeenCalled();
+    });
+
+    it("should throw BadRequestError is feedback doesn't exist", async () => {
+      feedbackRepository.findById.mockResolvedValue(null);
+
+      await expect(feedbackService.upvote("user-1", "feedback-1")).rejects.toThrow(BadRequestError);
+      expect(feedbackVoteRepository.create).not.toHaveBeenCalled();
+      expect(feedbackRepository.incrementUpvotes).not.toHaveBeenCalled();
+    })
   });
 
   describe("FeedbackService.delete", () => {
