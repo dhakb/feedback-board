@@ -3,10 +3,11 @@ import { Feedback, FeedbackStatus } from "../domain/entities/Feedback";
 import { CreateFeedbackDTO, UpdateFeedbackDTO, IFeedbackRepository } from "../domain/repositories/IFeedbackRepository";
 import { Role } from "../domain/entities/User";
 import { ForbiddenError, NotFoundError } from "../errors/ApiError";
+import { IFeedbackVoteRepository } from "../domain/repositories/IFeedbackVoteRepository";
 
 
 export class FeedbackServiceImpl implements FeedbackService {
-  constructor(private readonly feedbackRepo: IFeedbackRepository) {
+  constructor(private readonly feedbackRepo: IFeedbackRepository, private readonly feedbackVoteRepo: IFeedbackVoteRepository) {
   }
 
   async createFeedback(data: CreateFeedbackDTO): Promise<Feedback> {
@@ -26,8 +27,15 @@ export class FeedbackServiceImpl implements FeedbackService {
     return await this.feedbackRepo.list();
   }
 
-  async upvote(id: string): Promise<void> {
-    return await this.feedbackRepo.upvote(id);
+  async upvote(userId: string, feedbackId: string): Promise<void> {
+    const existingUpvote = await this.feedbackVoteRepo.find(userId, feedbackId);
+    if (existingUpvote) {
+      throw new ForbiddenError("You've already upvoted this feedback");
+    }
+
+    await this.feedbackVoteRepo.create(userId, feedbackId);
+
+    return await this.feedbackRepo.upvote(feedbackId);
   }
 
   async delete(feedbackId: string, userId: string, role: Role): Promise<void> {

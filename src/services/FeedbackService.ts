@@ -10,7 +10,7 @@ export interface FeedbackService {
 
   list(): Promise<Feedback[]>;
 
-  upvote(id: string): Promise<void>;
+  upvote(userId: string, feedbackId: string): Promise<void>;
 
   delete(feedbackId: string, userId: string, role: Role): Promise<void>;
 

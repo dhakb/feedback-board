@@ -24,8 +24,8 @@ export class FeedbackController {
     res.status(200).json(feedback);
   }
 
-  async upvote(req: Request, res: Response) {
-    await this.service.upvote(req.params.id);
+  async upvote(req: AuthRequest, res: Response) {
+    await this.service.upvote(req.user!.userId, req.params.id);
     res.status(204).send();
   }
 

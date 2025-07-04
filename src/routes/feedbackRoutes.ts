@@ -4,6 +4,7 @@ import { authorizeAdmin } from "../middleware/authorizeAdmin.middleware";
 import { FeedbackController } from "../controllers/FeedbackController";
 import { FeedbackServiceImpl } from "../services/FeedbackServiceImpl";
 import { PrismaFeedbackRepository } from "../infrastructure/repositories/PrismaFeedbackRepository";
+import { PrismaFeedbackVoteRepository } from "../infrastructure/repositories/PrismaFeedbackVoteRepository";
 import { validateRequestInput } from "../middleware/validateRequestInput.middleware";
 import {
   createFeedbackSchema,
@@ -13,8 +14,9 @@ import {
 
 
 const router = Router();
-const repository = new PrismaFeedbackRepository();
-const service = new FeedbackServiceImpl(repository);
+const feedbackRepository = new PrismaFeedbackRepository();
+const feedbackVoteRepository = new PrismaFeedbackVoteRepository();
+const service = new FeedbackServiceImpl(feedbackRepository, feedbackVoteRepository);
 const controller = new FeedbackController(service);
 
 router.post("/", authenticate, validateRequestInput(createFeedbackSchema), controller.create.bind(controller));

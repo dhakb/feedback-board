@@ -2,6 +2,7 @@ import { IFeedbackRepository, UpdateFeedbackDTO } from "../../domain/repositorie
 import { Feedback } from "../../domain/entities/Feedback";
 import { FeedbackServiceImpl } from "../FeedbackServiceImpl";
 import { ForbiddenError } from "../../errors/ApiError";
+import { IFeedbackVoteRepository } from "../../domain/repositories/IFeedbackVoteRepository";
 
 
 const mockFeedback: Feedback = {
@@ -19,6 +20,8 @@ describe("FeedbackService", () => {
   let feedbackRepository: jest.Mocked<IFeedbackRepository>;
   let feedbackService: FeedbackServiceImpl;
 
+  let feedbackVoteRepository: jest.Mocked<IFeedbackVoteRepository>
+
   beforeEach(() => {
     feedbackRepository = {
       create: jest.fn().mockResolvedValue(mockFeedback),
@@ -29,7 +32,12 @@ describe("FeedbackService", () => {
       update: jest.fn().mockResolvedValue(mockFeedback)
     };
 
-    feedbackService = new FeedbackServiceImpl(feedbackRepository);
+    feedbackVoteRepository = {
+      find: jest.fn(),
+      create: jest.fn()
+    }
+
+    feedbackService = new FeedbackServiceImpl(feedbackRepository, feedbackVoteRepository);
   });
 
   it("should create a feedback and return it", async () => {
@@ -62,7 +70,7 @@ describe("FeedbackService", () => {
   });
 
   it("should upvote feedback", async () => {
-    await feedbackService.upvote("feedback-1");
+    await feedbackService.upvote("user-1", "feedback-1");
 
     expect(feedbackRepository.upvote).toHaveBeenCalledWith("feedback-1");
   });
