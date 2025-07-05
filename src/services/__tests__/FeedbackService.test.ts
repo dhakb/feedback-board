@@ -1,6 +1,6 @@
 import { Feedback } from "../../domain/entities/Feedback";
 import { FeedbackServiceImpl } from "../FeedbackServiceImpl";
-import { BadRequestError, ForbiddenError } from "../../errors/ApiError";
+import { BadRequestError, ForbiddenError, NotFoundError } from "../../errors/ApiError";
 import { IFeedbackVoteRepository } from "../../domain/repositories/IFeedbackVoteRepository";
 import { IFeedbackRepository, UpdateFeedbackDTO } from "../../domain/repositories/IFeedbackRepository";
 
@@ -69,6 +69,12 @@ describe("FeedbackService", () => {
 
       expect(feedbackRepository.findById).toHaveBeenCalledWith("feedback-1");
       expect(result?.id).toBe("feedback-1");
+    });
+
+    it("should throw NotFoundError if feedback doesn't exist", async () => {
+      feedbackRepository.findById.mockResolvedValue(null);
+
+      await expect(feedbackService.findById("feedback-1")).rejects.toThrow(NotFoundError);
     });
   });
 
