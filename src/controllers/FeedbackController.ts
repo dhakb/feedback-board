@@ -11,22 +11,44 @@ export class FeedbackController {
   async create(req: Request, res: Response) {
     const {title, description, category, authorId} = req.body;
     const feedback = await this.service.createFeedback({title, description, category, authorId});
-    res.status(201).json(feedback);
+
+    res.status(201).json({
+      status: "success",
+      data: {
+        feedback
+      }
+    });
   }
 
   async list(_req: Request, res: Response) {
     const feedbacks = await this.service.list();
-    res.json(feedbacks);
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        feedbacks
+      }
+    });
   }
 
   async getById(req: Request, res: Response) {
     const feedback = await this.service.findById(req.params.id);
-    res.status(200).json(feedback);
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        feedback
+      }
+    });
   }
 
   async upvote(req: AuthRequest, res: Response) {
     await this.service.upvote(req.user!.userId, req.params.id);
-    res.status(204).send();
+
+    res.status(204).send({
+      status: "success",
+      data: {}
+    });
   }
 
   async delete(req: AuthRequest, res: Response) {
@@ -35,7 +57,11 @@ export class FeedbackController {
     const role = req.user?.role as Role || "";
 
     await this.service.delete(feedbackId, userId, role);
-    res.status(204).send();
+
+    res.status(204).send({
+      status: "success",
+      data: {}
+    });
   }
 
   async updateFeedbackByUser(req: AuthRequest, res: Response) {
@@ -44,7 +70,13 @@ export class FeedbackController {
     const userId = req.user!.userId;
 
     const feedback = await this.service.updateFeedbackByUser(feedbackId, userId, data);
-    res.status(200).json(feedback);
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        feedback
+      }
+    });
   }
 
   async updateFeedbackStatusByAdmin(req: AuthRequest, res: Response) {
@@ -52,6 +84,12 @@ export class FeedbackController {
     const {status} = req.body;
 
     const feedback = await this.service.updateFeedBackStatusByAdmin(feedbackId, status);
-    res.status(200).json(feedback);
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        feedback
+      }
+    });
   }
 }

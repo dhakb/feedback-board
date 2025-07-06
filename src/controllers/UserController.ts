@@ -12,6 +12,12 @@ export class UserController {
     const {email, ...data} = req.body;
 
     const user = await this.service.updateUserProfile(req.user!.userId, email, data);
-    res.status(200).json({user});
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        user
+      }
+    });
   }
 }

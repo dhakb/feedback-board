@@ -6,11 +6,11 @@ export function errorHandler(err: unknown, _req: Request, res: Response, _next: 
   console.error(err);
 
   if (err instanceof ApiError) {
-    res.status(err.statusCode).json({error: err.message});
+    res.status(err.statusCode).json({status: "fail", error: {message: err.message}});
     return;
   }
 
-  res.status(500).json({error: "Internal Server Error"});
+  res.status(500).json({status: "fail", error: {message: "Internal Server Error"}});
   return;
 }
 

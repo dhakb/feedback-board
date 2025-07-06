@@ -9,22 +9,26 @@ export class AuthController {
   async register(req: Request, res: Response) {
     const {name, email, password} = req.body;
 
-    try {
-      const user = await this.authService.register(name, email, password);
-      res.status(201).json({user});
-    } catch (e) {
-      res.status(400).json({error: (e as Error).message});
-    }
+    const user = await this.authService.register(name, email, password);
+
+    res.status(201).json({
+      status: "success",
+      data: {
+        user
+      }
+    });
   }
 
   async login(req: Request, res: Response) {
     const {email, password} = req.body;
 
-    try {
-      const result = await this.authService.login(email, password);
-      res.status(200).json(result);
-    } catch (e) {
-      res.status(400).json({error: (e as Error).message});
-    }
+    const result = await this.authService.login(email, password);
+
+    res.status(201).json({
+      status: "success",
+      data: {
+        result
+      }
+    });
   }
 }
