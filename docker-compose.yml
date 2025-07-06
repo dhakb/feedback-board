@@ -1,0 +1,22 @@
+version: "3"
+
+services:
+  api:
+    build: ./
+    entrypoint: ["sh", "-c", "npx prisma generate && npx prisma migrate deploy && npm run build && npm start"]
+    container_name: feedback-board-api-prod
+    volumes:
+      - ./:/app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: feedback-board-admin
+      POSTGRES_PASSWORD: feedback-board-superunsafepassword
+      POSTGRES_DB: feedback-board
+    container_name: feedback-board-db-prod
+    ports:
+      - "5432:5432"
