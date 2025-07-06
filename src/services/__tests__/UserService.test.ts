@@ -1,6 +1,7 @@
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { User } from "../../domain/entities/User";
 import { UserServiceImpl } from "../UserService";
+import { ForbiddenError, NotFoundError } from "../../errors/ApiError";
 
 
 const mockUser: User = {
@@ -19,16 +20,20 @@ describe("UserService", () => {
   beforeEach(() => {
     userRepository = {
       create: jest.fn(),
-      findByEmail: jest.fn().mockResolvedValue(mockUser),
+      findByEmail: jest.fn(),
       findById: jest.fn(),
       update: jest.fn(),
       delete: jest.fn()
     };
 
     userService = new UserServiceImpl(userRepository);
+
+    jest.resetAllMocks();
   });
 
   it("should update permitted user fields and return updated user", async () => {
+    userRepository.findByEmail.mockResolvedValue(mockUser);
+
     const input = {
       name: "Updated Name"
     };
@@ -39,5 +44,19 @@ describe("UserService", () => {
 
     expect(userRepository.update).toHaveBeenCalledWith("user-test@test.com", input);
     expect(user.name).toBe(input.name);
+  });
+
+  it("should throw NotFoundError if user doesn't exist", async () => {
+    await expect(userService.updateUserProfile("user-2", "user-test@test.com", {name: "Updated name"})).rejects.toThrow(NotFoundError);
+
+    expect(userRepository.update).not.toHaveBeenCalled();
+  });
+
+  it("should throw ForbiddenError if user tries to update other user's profile", async () => {
+    userRepository.findByEmail.mockResolvedValue(mockUser);
+
+    await expect(userService.updateUserProfile("wrong-1", "user-test@test.com", {name: "Updated name"})).rejects.toThrow(ForbiddenError);
+
+    expect(userRepository.update).not.toHaveBeenCalled();
   });
 });
