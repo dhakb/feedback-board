@@ -5,10 +5,7 @@ import express from "express";
 
 dotenv.config();
 
-import userRoutes from "./routes/userRoutes";
-import authRoutes from "./routes/authRoutes";
-import commentRoutes from "./routes/commentRoutes";
-import feedbackRoutes from "./routes/feedbackRoutes";
+import apiRouter from "./routes";
 import { errorHandler } from "./middleware/errorHandler";
 
 
@@ -22,10 +19,7 @@ const createApp = () => {
     res.status(200).json({message: "API is healthy!"});
   });
 
-  app.use("/auth", authRoutes);
-  app.use("/feedback", feedbackRoutes);
-  app.use("/comment", commentRoutes);
-  app.use("/user", userRoutes);
+  app.use("/api", apiRouter);
 
   app.use(errorHandler);
 
