@@ -5,30 +5,32 @@ import express from "express";
 
 dotenv.config();
 
-import authRoutes from "./routes/authRoutes";
-import feedbackRoutes from "./routes/feedbackRoutes";
-import commentRoutes from "./routes/commentRoutes";
-import { errorHandler } from "./middleware/errorHandler";
 import userRoutes from "./routes/userRoutes";
+import authRoutes from "./routes/authRoutes";
+import commentRoutes from "./routes/commentRoutes";
+import feedbackRoutes from "./routes/feedbackRoutes";
+import { errorHandler } from "./middleware/errorHandler";
 
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+const createApp = () => {
+  const app = express();
 
-const PORT = process.env.PORT || 8080;
+  app.use(cors());
+  app.use(express.json());
 
-app.get("/health", (_, res) => {
-  res.status(200).json({message: "API is healthy!"});
-});
+  app.get("/health", (_, res) => {
+    res.status(200).json({message: "API is healthy!"});
+  });
 
-app.use("/auth", authRoutes);
-app.use("/feedback", feedbackRoutes);
-app.use("/comment", commentRoutes);
-app.use("/user", userRoutes);
+  app.use("/auth", authRoutes);
+  app.use("/feedback", feedbackRoutes);
+  app.use("/comment", commentRoutes);
+  app.use("/user", userRoutes);
 
-app.use(errorHandler);
+  app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+  return app;
+};
+
+
+export { createApp };
