@@ -9,6 +9,7 @@ import apiRouter from "./routes";
 import { errorHandler } from "./middleware/errorHandler.middleware";
 import { globalLimiter } from "./middleware/rateLimiter.middleware";
 import { unknownRoutesHandler } from "./middleware/unknownRoutesHandler.middleware";
+import { trimRequest } from "./middleware/trimRequest.middleware";
 
 
 const createApp = () => {
@@ -20,6 +21,8 @@ const createApp = () => {
   app.get("/health", (_, res) => {
     res.status(200).json({message: "API is healthy!"});
   });
+
+  app.use(trimRequest);
 
   app.use("/api", globalLimiter, apiRouter);
 
