@@ -6,7 +6,7 @@ import express from "express";
 dotenv.config();
 
 import apiRouter from "./routes";
-import { errorHandler } from "./middleware/errorHandler";
+import { errorHandler } from "./middleware/errorHandler.middleware";
 
 
 const createApp = () => {
