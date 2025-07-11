@@ -8,6 +8,7 @@ dotenv.config();
 import apiRouter from "./routes";
 import { errorHandler } from "./middleware/errorHandler.middleware";
 import { globalLimiter } from "./middleware/rateLimiter.middleware";
+import { unknownRoutesHandler } from "./middleware/unknownRoutesHandler.middleware";
 
 
 const createApp = () => {
@@ -21,6 +22,8 @@ const createApp = () => {
   });
 
   app.use("/api", globalLimiter, apiRouter);
+
+  app.use(unknownRoutesHandler);
 
   app.use(errorHandler);
 
