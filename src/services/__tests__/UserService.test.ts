@@ -1,6 +1,6 @@
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { User } from "../../domain/entities/User";
-import { UserServiceImpl } from "../UserService";
+import { UserServiceImpl } from "../UserServiceImpl";
 import { ForbiddenError, NotFoundError } from "../../errors/ApiError";
 
 

@@ -12,7 +12,7 @@ const mockComment: Comment = {
 };
 
 
-describe("CommentService", () => {
+describe("ICommentService", () => {
   let commentRepository: jest.Mocked<ICommentRepository>;
   let commentService: CommentServiceImpl;
 

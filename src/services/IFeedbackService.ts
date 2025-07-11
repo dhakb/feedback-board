@@ -3,7 +3,7 @@ import { Feedback, FeedbackStatus } from "../domain/entities/Feedback";
 import { CreateFeedbackDTO, UpdateFeedbackDTO } from "../domain/repositories/IFeedbackRepository";
 
 
-export interface FeedbackService {
+export interface IFeedbackService {
   createFeedback(data: CreateFeedbackDTO): Promise<Feedback>;
 
   findById(id: string): Promise<Feedback | null>;

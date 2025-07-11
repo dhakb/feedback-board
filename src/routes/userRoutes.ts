@@ -2,7 +2,7 @@ import { Router } from "express";
 import { PrismaUserRepository } from "../infrastructure/repositories/PrismaUserRepository";
 import { validateRequestInput } from "../middleware/validateRequestInput.middleware";
 import { updateUserProfileSchema } from "../validators/user.validator";
-import { UserServiceImpl } from "../services/UserService";
+import { UserServiceImpl } from "../services/UserServiceImpl";
 import { UserController } from "../controllers/UserController";
 import { authenticate } from "../middleware/authenticate.middleware";
 

@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
-import { FeedbackService } from "../services/FeedbackService";
+import { IFeedbackService } from "../services/IFeedbackService";
 import { AuthRequest } from "../middleware/authenticate.middleware";
 import type { Role } from "../domain/entities/User";
 
 
 export class FeedbackController {
-  constructor(private readonly service: FeedbackService) {
+  constructor(private readonly service: IFeedbackService) {
   }
 
   async create(req: Request, res: Response) {

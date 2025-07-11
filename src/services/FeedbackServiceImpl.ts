@@ -1,4 +1,4 @@
-import { FeedbackService } from "./FeedbackService";
+import { IFeedbackService } from "./IFeedbackService";
 import { Feedback, FeedbackStatus } from "../domain/entities/Feedback";
 import { CreateFeedbackDTO, UpdateFeedbackDTO, IFeedbackRepository } from "../domain/repositories/IFeedbackRepository";
 import { Role } from "../domain/entities/User";
@@ -6,7 +6,7 @@ import { BadRequestError, ForbiddenError, NotFoundError } from "../errors/ApiErr
 import { IFeedbackVoteRepository } from "../domain/repositories/IFeedbackVoteRepository";
 
 
-export class FeedbackServiceImpl implements FeedbackService {
+export class FeedbackServiceImpl implements IFeedbackService {
   constructor(private readonly feedbackRepo: IFeedbackRepository, private readonly feedbackVoteRepo: IFeedbackVoteRepository) {
   }
 

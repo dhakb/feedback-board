@@ -1,9 +1,9 @@
 import type { Request, Response } from "express";
-import CommentService from "../services/CommentService";
+import ICommentService from "../services/ICommentService";
 
 
 export class CommentController {
-  constructor(private readonly commentService: CommentService) {
+  constructor(private readonly commentService: ICommentService) {
   }
 
   async create(req: Request, res: Response) {

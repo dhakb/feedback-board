@@ -1,10 +1,10 @@
-import CommentService from "./CommentService";
+import ICommentService from "./ICommentService";
 import { Comment } from "../domain/entities/Comment";
 
 import { CreateCommentDTO, ICommentRepository } from "../domain/repositories/ICommentRepository";
 
 
-export class CommentServiceImpl implements CommentService {
+export class CommentServiceImpl implements ICommentService {
   constructor(private readonly commentRepo: ICommentRepository) {
   }
 
