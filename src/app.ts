@@ -7,6 +7,7 @@ dotenv.config();
 
 import apiRouter from "./routes";
 import { errorHandler } from "./middleware/errorHandler.middleware";
+import { globalLimiter } from "./middleware/rateLimiter.middleware";
 
 
 const createApp = () => {
@@ -19,7 +20,7 @@ const createApp = () => {
     res.status(200).json({message: "API is healthy!"});
   });
 
-  app.use("/api", apiRouter);
+  app.use("/api", globalLimiter, apiRouter);
 
   app.use(errorHandler);
 
