@@ -17,7 +17,7 @@ export interface UpdateFeedbackDTO {
 
 
 export interface IFeedbackRepository {
-  create(data: CreateFeedbackDTO): Promise<Feedback>;
+  create(data: Feedback): Promise<Feedback>;
 
   findById(id: string): Promise<Feedback | null>;
 
@@ -27,5 +27,5 @@ export interface IFeedbackRepository {
 
   delete(id: string): Promise<void>;
 
-  update(id: string, data: Partial<UpdateFeedbackDTO>): Promise<Feedback>;
+  update(id: string, data: Partial<Feedback>): Promise<Feedback>;
 }

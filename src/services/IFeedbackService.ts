@@ -4,7 +4,7 @@ import { CreateFeedbackDTO, UpdateFeedbackDTO } from "../domain/repositories/IFe
 
 
 export interface IFeedbackService {
-  createFeedback(data: CreateFeedbackDTO): Promise<Feedback>;
+  create(data: CreateFeedbackDTO): Promise<Feedback>;
 
   findById(id: string): Promise<Feedback | null>;
 

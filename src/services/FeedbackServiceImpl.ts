@@ -1,17 +1,27 @@
+import { generateUUID } from "../utils/uuid";
+import { Role } from "../domain/entities/User";
 import { IFeedbackService } from "./IFeedbackService";
 import { Feedback, FeedbackStatus } from "../domain/entities/Feedback";
-import { CreateFeedbackDTO, UpdateFeedbackDTO, IFeedbackRepository } from "../domain/repositories/IFeedbackRepository";
-import { Role } from "../domain/entities/User";
 import { BadRequestError, ForbiddenError, NotFoundError } from "../errors/ApiError";
 import { IFeedbackVoteRepository } from "../domain/repositories/IFeedbackVoteRepository";
+import { UpdateFeedbackDTO, IFeedbackRepository, CreateFeedbackDTO } from "../domain/repositories/IFeedbackRepository";
 
 
 export class FeedbackServiceImpl implements IFeedbackService {
   constructor(private readonly feedbackRepo: IFeedbackRepository, private readonly feedbackVoteRepo: IFeedbackVoteRepository) {
   }
 
-  async createFeedback(data: CreateFeedbackDTO): Promise<Feedback> {
-    return await this.feedbackRepo.create(data);
+  async create(data: CreateFeedbackDTO): Promise<Feedback> {
+    const feedback = new Feedback({
+      id: generateUUID(),
+      title: data.title,
+      description: data.description,
+      category: data.category,
+      status: "OPEN",
+      authorId: data.authorId,
+      upvotes: 0
+    });
+    return await this.feedbackRepo.create(feedback);
   }
 
   async findById(id: string): Promise<Feedback | null> {
@@ -77,7 +87,11 @@ export class FeedbackServiceImpl implements IFeedbackService {
       throw new ForbiddenError("Not allowed to update this feedback");
     }
 
-    return await this.feedbackRepo.update(feedbackId, data);
+    const updatedFeedback = new Feedback({
+      ...feedback,
+      ...data
+    });
+    return await this.feedbackRepo.update(feedbackId, updatedFeedback);
   }
 
   async updateFeedBackStatusByAdmin(feedbackId: string, status: FeedbackStatus): Promise<Feedback> {

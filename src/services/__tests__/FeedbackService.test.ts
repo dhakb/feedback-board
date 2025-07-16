@@ -2,10 +2,14 @@ import { Feedback } from "../../domain/entities/Feedback";
 import { FeedbackServiceImpl } from "../FeedbackServiceImpl";
 import { BadRequestError, ForbiddenError, NotFoundError } from "../../errors/ApiError";
 import { IFeedbackVoteRepository } from "../../domain/repositories/IFeedbackVoteRepository";
-import { IFeedbackRepository, UpdateFeedbackDTO } from "../../domain/repositories/IFeedbackRepository";
+import {
+  CreateFeedbackDTO,
+  IFeedbackRepository,
+  UpdateFeedbackDTO
+} from "../../domain/repositories/IFeedbackRepository";
 
 
-const mockFeedback: Feedback = {
+const mockFeedback = new Feedback({
   id: "feedback-1",
   title: "Dark mode",
   description: "Add dark mode support",
@@ -14,7 +18,7 @@ const mockFeedback: Feedback = {
   upvotes: 0,
   authorId: "user-1",
   createdAt: new Date()
-};
+});
 
 describe("FeedbackService", () => {
   let feedbackRepository: jest.Mocked<IFeedbackRepository>;
@@ -43,21 +47,26 @@ describe("FeedbackService", () => {
   });
 
   describe("FeedbackService.create", () => {
-    it("should create a feedback and return it", async () => {
+    it("should create a Feedback, pass it to repository and return", async () => {
       feedbackRepository.create.mockResolvedValue(mockFeedback);
 
-      const input = {
+      const input: CreateFeedbackDTO = {
         title: mockFeedback.title,
         description: mockFeedback.description,
         category: mockFeedback.category,
         authorId: mockFeedback.authorId
       };
 
-      const feedback = await feedbackService.createFeedback(input);
+      const createdFeedback = await feedbackService.create(input);
 
-      expect(feedbackRepository.create).toHaveBeenCalledWith(input);
-      expect(feedback.title).toBe("Dark mode");
-      expect(feedback.authorId).toBe("user-1");
+      const callArg = feedbackRepository.create.mock.calls[0][0];
+
+      expect(feedbackRepository.create).toHaveBeenCalledTimes(1);
+      expect(createdFeedback).toBeInstanceOf(Feedback);
+      expect(callArg).toBeInstanceOf(Feedback);
+      expect(callArg.id).toBeDefined();
+      expect(callArg.status).toBe("OPEN");
+      expect(callArg.upvotes).toBe(0);
     });
   });
 
@@ -151,21 +160,21 @@ describe("FeedbackService", () => {
 
   describe("FeedbackService.update", () => {
     it("should allow the author to update their feedback partially", async () => {
-      const input = {
+      const input: UpdateFeedbackDTO = {
         title: "Updated Title",
         description: "Updated Description",
-        category: "Updated Category"
+        category: "Updated Category",
       };
 
       feedbackRepository.findById.mockResolvedValue(mockFeedback);
       feedbackRepository.update.mockResolvedValue({...mockFeedback, ...input});
 
-      const feedback = await feedbackService.updateFeedbackByUser("feedback-1", "user-1", input);
+      const updatedFeedback = await feedbackService.updateFeedbackByUser("feedback-1", "user-1", input);
 
-      expect(feedbackRepository.update).toHaveBeenCalledWith("feedback-1", input);
-      expect(feedback.title).toBe("Updated Title");
-      expect(feedback.description).toBe("Updated Description");
-      expect(feedback.category).toBe("Updated Category");
+      expect(feedbackRepository.update).toHaveBeenCalledTimes(1);
+      expect(updatedFeedback.title).toBe("Updated Title");
+      expect(updatedFeedback.description).toBe("Updated Description");
+      expect(updatedFeedback.category).toBe("Updated Category");
     });
 
     it("should throw ForbiddenError if author tries to update status of the feedback", async () => {

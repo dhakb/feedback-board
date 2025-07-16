@@ -1,22 +1,13 @@
 import { PrismaClient } from "../../../generated/prisma";
 import { Feedback } from "../../domain/entities/Feedback";
-import {
-  IFeedbackRepository,
-  CreateFeedbackDTO,
-  UpdateFeedbackDTO
-} from "../../domain/repositories/IFeedbackRepository";
+import { IFeedbackRepository, UpdateFeedbackDTO } from "../../domain/repositories/IFeedbackRepository";
 
 
 const prisma = new PrismaClient();
 
 export class PrismaFeedbackRepository implements IFeedbackRepository {
-  async create(data: CreateFeedbackDTO): Promise<Feedback> {
-    return prisma.feedback.create({
-      data: {
-        ...data,
-        status: "OPEN"
-      }
-    });
+  async create(data: Feedback): Promise<Feedback> {
+    return prisma.feedback.create({data});
   }
 
   async findById(id: string): Promise<Feedback | null> {
@@ -38,7 +29,7 @@ export class PrismaFeedbackRepository implements IFeedbackRepository {
     await prisma.feedback.delete({where: {id}});
   }
 
-  async update(id: string, data: UpdateFeedbackDTO): Promise<Feedback> {
+  async update(id: string, data: Partial<Feedback>): Promise<Feedback> {
     return prisma.feedback.update({where: {id}, data});
   }
 }
