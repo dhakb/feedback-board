@@ -1,5 +1,6 @@
-import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import { generateUUID } from "../utils/uuid";
 import { Role, User } from "../domain/entities/User";
 import { IUserRepository } from "../domain/repositories/IUserRepository";
 import { IAuthService, LoginResult } from "./IAuthService";
@@ -19,9 +20,18 @@ export class AuthServiceImpl implements IAuthService {
       throw new ConflictError("Email already in use");
     }
 
-    const user = await this.userRepo.create({name, email, password});
+    const passwordHash = await bcrypt.hash(password, 10);
 
-    const {password: _, ...safeUser} = user;
+    const user = new User({
+      id: generateUUID(),
+      name,
+      email,
+      password: passwordHash,
+      role: "USER"
+    });
+    const createdUser = await this.userRepo.create(user);
+
+    const {password: _, ...safeUser} = createdUser;
     return safeUser;
   }
 

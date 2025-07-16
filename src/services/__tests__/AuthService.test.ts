@@ -10,14 +10,14 @@ jest.mock("bcrypt");
 jest.mock("jsonwebtoken");
 
 
-const mockUser: User = {
+const mockUser = new User({
   id: "user-1",
   name: "Test User",
   email: "test@example.com",
   password: "hashed-password",
   role: "USER",
   createdAt: new Date()
-};
+});
 
 
 describe("AuthService", () => {
@@ -38,16 +38,19 @@ describe("AuthService", () => {
     jest.resetAllMocks();
   });
 
-  describe("register", () => {
+  describe("AuthService.register", () => {
     it("should register a new user", async () => {
       userRepository.findByEmail.mockResolvedValue(null);
       userRepository.create.mockResolvedValue(mockUser);
 
-      const result = await authService.register("Test User", "test@example.com", "password123");
+      const createdUser = await authService.register("Test User", "test@example.com", "password123");
+
+      const callArg = userRepository.create.mock.calls[0][0];
 
       expect(userRepository.findByEmail).toHaveBeenCalledWith("test@example.com");
       expect(userRepository.create).toHaveBeenCalled();
-      expect(result).toMatchObject({
+      expect(callArg).toBeInstanceOf(User);
+      expect(createdUser).toMatchObject({
         id: mockUser.id,
         name: mockUser.name,
         email: mockUser.email,

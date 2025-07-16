@@ -13,13 +13,13 @@ export interface UpdateUserProfileDTO {
 }
 
 export interface IUserRepository {
-  create(data: CreateUserDto): Promise<User>;
+  create(data: User): Promise<User>;
 
   findByEmail(email: string): Promise<User | null>;
 
   findById(id: string): Promise<User | null>;
 
-  update(email: string, data: Partial<UpdateUserProfileDTO>): Promise<User>;
+  update(email: string, data: Partial<User>): Promise<User>;
 
   delete(email: string): Promise<User>;
 }
