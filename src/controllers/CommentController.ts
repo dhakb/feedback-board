@@ -8,7 +8,7 @@ export class CommentController {
 
   async create(req: Request, res: Response) {
     const {content, feedbackId, authorId} = req.body;
-    const comment = await this.commentService.createComment({content, feedbackId, authorId});
+    const comment = await this.commentService.create({content, feedbackId, authorId});
 
     res.status(201).json({
       status: "success",

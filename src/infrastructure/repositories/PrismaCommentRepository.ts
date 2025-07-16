@@ -1,13 +1,13 @@
 import { Comment } from "../../domain/entities/Comment";
 import { PrismaClient } from "../../../generated/prisma";
-import { CreateCommentDTO, ICommentRepository } from "../../domain/repositories/ICommentRepository";
+import { ICommentRepository } from "../../domain/repositories/ICommentRepository";
 
 
 const prisma = new PrismaClient();
 
 
 export class PrismaCommentRepository implements ICommentRepository {
-  async create(data: CreateCommentDTO): Promise<Comment> {
+  async create(data: Comment): Promise<Comment> {
     return prisma.comment.create({data});
   }
 

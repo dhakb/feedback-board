@@ -1,15 +1,15 @@
 import { Comment } from "../../domain/entities/Comment";
-import { ICommentRepository } from "../../domain/repositories/ICommentRepository";
+import { CreateCommentDTO, ICommentRepository } from "../../domain/repositories/ICommentRepository";
 import { CommentServiceImpl } from "../CommentServiceImpl";
 
 
-const mockComment: Comment = {
-  id: "1",
+const mockComment = new Comment({
+  id: "comment-1",
   content: "This will be the banger if added!",
   feedbackId: "feedback-1",
   authorId: "user-1",
   createdAt: new Date()
-};
+});
 
 
 describe("ICommentService", () => {
@@ -25,18 +25,24 @@ describe("ICommentService", () => {
     commentService = new CommentServiceImpl(commentRepository);
   });
 
-  it("should create a comment and return it", async () => {
-    const input = {
+  it("should create a Comment, pass it to repository and return", async () => {
+    const input: CreateCommentDTO = {
       content: mockComment.content,
       feedbackId: mockComment.feedbackId,
       authorId: mockComment.authorId
     };
-    const result = await commentService.createComment(input);
 
-    expect(commentRepository.create).toHaveBeenCalledWith(input);
-    expect(result.content).toBe(input.content);
-    expect(result.authorId).toBe(input.authorId);
-    expect(result.feedbackId).toBe(input.feedbackId);
+    const createdComment = await commentService.create(input);
+
+    const callArg = commentRepository.create.mock.calls[0][0];
+
+    expect(commentRepository.create).toHaveBeenCalled();
+    expect(createdComment).toBeInstanceOf(Comment);
+    expect(callArg).toBeInstanceOf(Comment);
+    expect(callArg.id).toBeDefined();
+    expect(callArg.content).toBe(input.content);
+    expect(callArg.authorId).toBe(input.authorId);
+    expect(callArg.feedbackId).toBe(input.feedbackId);
   });
 
   it("should return all comment by feedback ID", async () => {
