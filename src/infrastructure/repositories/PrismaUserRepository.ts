@@ -14,7 +14,7 @@ export class PrismaUserRepository implements IUserRepository {
       data: {
         name: data.name,
         email: data.email,
-        passwordHash,
+        password: passwordHash,
         role: "USER"
       }
     });

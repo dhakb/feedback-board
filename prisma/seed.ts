@@ -13,7 +13,7 @@ async function main() {
     create: {
       email: "alice@email.com",
       name: "Alice",
-      passwordHash: passwordHash,
+      password: passwordHash,
       feedbacks: {
         create: {
           title: "Add theme toggle",
@@ -31,7 +31,7 @@ async function main() {
     create: {
       email: "tom@email.com",
       name: "Tom",
-      passwordHash: passwordHash,
+      password: passwordHash,
       feedbacks: {
         create: {
           title: "Google SignIn/SignUp Button",
@@ -54,7 +54,7 @@ async function main() {
     create: {
       email: "matthew@email.com",
       name: "Matthew",
-      passwordHash: passwordHash,
+      password: passwordHash,
       feedbacks: {
         create: {
           title: "Google SignIn/SignUp Button",
@@ -83,7 +83,7 @@ async function main() {
     create: {
       email: "admin@mail.com",
       name: "Admin",
-      passwordHash: passwordHash,
+      password: passwordHash,
       role: "ADMIN"
     }
   });

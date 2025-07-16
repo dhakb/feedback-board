@@ -13,7 +13,7 @@ export class AuthServiceImpl implements IAuthService {
   constructor(private readonly userRepo: IUserRepository) {
   }
 
-  async register(name: string, email: string, password: string): Promise<Omit<User, "passwordHash">> {
+  async register(name: string, email: string, password: string): Promise<Omit<User, "password">> {
     const existing = await this.userRepo.findByEmail(email);
     if (existing) {
       throw new ConflictError("Email already in use");
@@ -21,7 +21,7 @@ export class AuthServiceImpl implements IAuthService {
 
     const user = await this.userRepo.create({name, email, password});
 
-    const {passwordHash, ...safeUser} = user;
+    const {password: _, ...safeUser} = user;
     return safeUser;
   }
 
@@ -31,14 +31,14 @@ export class AuthServiceImpl implements IAuthService {
       throw new UnauthorizedError("Invalid credentials!");
     }
 
-    const isValid = await bcrypt.compare(password, user.passwordHash);
+    const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) {
       throw new UnauthorizedError("Invalid credentials");
     }
 
     const token = jwt.sign({userId: user.id, role: user.role}, JWT_SECRET, {expiresIn: "7d"});
 
-    const {passwordHash, ...safeUser} = user;
+    const {password: _, ...safeUser} = user;
     return {
       user: safeUser,
       token
