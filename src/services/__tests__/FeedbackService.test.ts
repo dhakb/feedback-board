@@ -7,6 +7,7 @@ import {
   IFeedbackRepository,
   UpdateFeedbackDTO
 } from "../../domain/repositories/IFeedbackRepository";
+import { FeedbackVote } from "../../domain/entities/FeedbackVote";
 
 
 const mockFeedback = new Feedback({
@@ -106,9 +107,12 @@ describe("FeedbackService", () => {
     it("should upvote feedback if user hasn’t voted yet", async () => {
       await feedbackService.upvote("user-1", "feedback-1");
 
+      const callArg = feedbackVoteRepository.create.mock.calls[0][0];
+
       expect(feedbackVoteRepository.find).toHaveBeenCalledWith("user-1", "feedback-1");
-      expect(feedbackVoteRepository.create).toHaveBeenCalledWith("user-1", "feedback-1");
+      expect(feedbackVoteRepository.create).toHaveBeenCalled();
       expect(feedbackRepository.incrementUpvotes).toHaveBeenCalledWith("feedback-1");
+      expect(callArg).toBeInstanceOf(FeedbackVote);
     });
 
     it("should throw ForbiddenError if user already voted", async () => {
@@ -163,7 +167,7 @@ describe("FeedbackService", () => {
       const input: UpdateFeedbackDTO = {
         title: "Updated Title",
         description: "Updated Description",
-        category: "Updated Category",
+        category: "Updated Category"
       };
 
       feedbackRepository.findById.mockResolvedValue(mockFeedback);

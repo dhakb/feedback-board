@@ -5,6 +5,7 @@ import { Feedback, FeedbackStatus } from "../domain/entities/Feedback";
 import { BadRequestError, ForbiddenError, NotFoundError } from "../errors/ApiError";
 import { IFeedbackVoteRepository } from "../domain/repositories/IFeedbackVoteRepository";
 import { UpdateFeedbackDTO, IFeedbackRepository, CreateFeedbackDTO } from "../domain/repositories/IFeedbackRepository";
+import { FeedbackVote } from "../domain/entities/FeedbackVote";
 
 
 export class FeedbackServiceImpl implements IFeedbackService {
@@ -48,7 +49,8 @@ export class FeedbackServiceImpl implements IFeedbackService {
       throw new ForbiddenError("You've already upvoted this feedback");
     }
 
-    await this.feedbackVoteRepo.create(userId, feedbackId);
+    const feedbackVote = new FeedbackVote({userId, feedbackId});
+    await this.feedbackVoteRepo.create(feedbackVote);
 
     return await this.feedbackRepo.incrementUpvotes(feedbackId);
   }
