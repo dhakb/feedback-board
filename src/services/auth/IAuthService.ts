@@ -1,4 +1,4 @@
-import { Role, User } from "../domain/entities/User";
+import { Role, User } from "../../domain/entities/User";
 
 
 export interface LoginResult {

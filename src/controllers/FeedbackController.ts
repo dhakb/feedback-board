@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { IFeedbackService } from "../services/IFeedbackService";
+import { IFeedbackService } from "../services/feeback/IFeedbackService";
 import { AuthRequest } from "../middleware/authenticate.middleware";
 import type { Role } from "../domain/entities/User";
 

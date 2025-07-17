@@ -1,5 +1,5 @@
 import { Feedback } from "../../domain/entities/Feedback";
-import { FeedbackServiceImpl } from "../FeedbackServiceImpl";
+import { FeedbackServiceImpl } from "../feeback/FeedbackServiceImpl";
 import { BadRequestError, ForbiddenError, NotFoundError } from "../../errors/ApiError";
 import { IFeedbackVoteRepository } from "../../domain/repositories/IFeedbackVoteRepository";
 import {

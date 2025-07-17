@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { AuthController } from "../controllers/AuthController";
-import { AuthServiceImpl } from "../services/AuthServiceImpl";
+import { AuthServiceImpl } from "../services/auth/AuthServiceImpl";
 import { PrismaUserRepository } from "../infrastructure/repositories/PrismaUserRepository";
 import { validateRequestInput } from "../middleware/validateRequestInput.middleware";
 import { createUserSchema, loginUserSchema } from "../validators/user.validator";

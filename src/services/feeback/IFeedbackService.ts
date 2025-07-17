@@ -1,6 +1,6 @@
-import { Role } from "../domain/entities/User";
-import { Feedback, FeedbackStatus } from "../domain/entities/Feedback";
-import { CreateFeedbackDTO, UpdateFeedbackDTO } from "../domain/repositories/IFeedbackRepository";
+import { Role } from "../../domain/entities/User";
+import { Feedback, FeedbackStatus } from "../../domain/entities/Feedback";
+import { CreateFeedbackDTO, UpdateFeedbackDTO } from "../../domain/repositories/IFeedbackRepository";
 
 
 export interface IFeedbackService {

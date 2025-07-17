@@ -2,7 +2,7 @@ import { Router } from "express";
 import { authenticate } from "../middleware/authenticate.middleware";
 import { authorizeAdmin } from "../middleware/authorizeAdmin.middleware";
 import { FeedbackController } from "../controllers/FeedbackController";
-import { FeedbackServiceImpl } from "../services/FeedbackServiceImpl";
+import { FeedbackServiceImpl } from "../services/feeback/FeedbackServiceImpl";
 import { PrismaFeedbackRepository } from "../infrastructure/repositories/PrismaFeedbackRepository";
 import { PrismaFeedbackVoteRepository } from "../infrastructure/repositories/PrismaFeedbackVoteRepository";
 import { validateRequestInput } from "../middleware/validateRequestInput.middleware";

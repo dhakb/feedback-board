@@ -1,7 +1,7 @@
-import { User } from "../domain/entities/User";
+import { User } from "../../domain/entities/User";
 import { IUserService } from "./IUserService";
-import { ForbiddenError, NotFoundError } from "../errors/ApiError";
-import { IUserRepository, UpdateUserProfileDTO } from "../domain/repositories/IUserRepository";
+import { ForbiddenError, NotFoundError } from "../../errors/ApiError";
+import { IUserRepository, UpdateUserProfileDTO } from "../../domain/repositories/IUserRepository";
 
 
 export class UserServiceImpl implements IUserService {

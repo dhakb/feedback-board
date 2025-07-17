@@ -1,6 +1,6 @@
 import { Comment } from "../../domain/entities/Comment";
 import { CreateCommentDTO, ICommentRepository } from "../../domain/repositories/ICommentRepository";
-import { CommentServiceImpl } from "../CommentServiceImpl";
+import { CommentServiceImpl } from "../comment/CommentServiceImpl";
 
 
 const mockComment = new Comment({

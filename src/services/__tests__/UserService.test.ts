@@ -1,6 +1,6 @@
 import { IUserRepository, UpdateUserProfileDTO } from "../../domain/repositories/IUserRepository";
 import { User } from "../../domain/entities/User";
-import { UserServiceImpl } from "../UserServiceImpl";
+import { UserServiceImpl } from "../user/UserServiceImpl";
 import { ForbiddenError, NotFoundError } from "../../errors/ApiError";
 
 

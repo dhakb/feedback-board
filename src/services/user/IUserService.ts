@@ -1,5 +1,5 @@
-import { User } from "../domain/entities/User";
-import { UpdateUserProfileDTO } from "../domain/repositories/IUserRepository";
+import { User } from "../../domain/entities/User";
+import { UpdateUserProfileDTO } from "../../domain/repositories/IUserRepository";
 
 
 export interface IUserService {

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { authenticate } from "../middleware/authenticate.middleware";
 import { CommentController } from "../controllers/CommentController";
-import { CommentServiceImpl } from "../services/CommentServiceImpl";
+import { CommentServiceImpl } from "../services/comment/CommentServiceImpl";
 import { PrismaCommentRepository } from "../infrastructure/repositories/PrismaCommentRepository";
 import { validateRequestInput } from "../middleware/validateRequestInput.middleware";
 import { createCommentSchema } from "../validators/comment.validator";

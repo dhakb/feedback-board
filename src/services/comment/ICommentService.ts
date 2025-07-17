@@ -1,5 +1,5 @@
-import { Comment } from "../domain/entities/Comment";
-import { CreateCommentDTO } from "../domain/repositories/ICommentRepository";
+import { Comment } from "../../domain/entities/Comment";
+import { CreateCommentDTO } from "../../domain/repositories/ICommentRepository";
 
 
 export default interface ICommentService {

@@ -1,11 +1,11 @@
-import { generateUUID } from "../utils/uuid";
-import { Role } from "../domain/entities/User";
+import { generateUUID } from "../../utils/uuid";
+import { Role } from "../../domain/entities/User";
 import { IFeedbackService } from "./IFeedbackService";
-import { Feedback, FeedbackStatus } from "../domain/entities/Feedback";
-import { BadRequestError, ForbiddenError, NotFoundError } from "../errors/ApiError";
-import { IFeedbackVoteRepository } from "../domain/repositories/IFeedbackVoteRepository";
-import { UpdateFeedbackDTO, IFeedbackRepository, CreateFeedbackDTO } from "../domain/repositories/IFeedbackRepository";
-import { FeedbackVote } from "../domain/entities/FeedbackVote";
+import { Feedback, FeedbackStatus } from "../../domain/entities/Feedback";
+import { BadRequestError, ForbiddenError, NotFoundError } from "../../errors/ApiError";
+import { IFeedbackVoteRepository } from "../../domain/repositories/IFeedbackVoteRepository";
+import { UpdateFeedbackDTO, IFeedbackRepository, CreateFeedbackDTO } from "../../domain/repositories/IFeedbackRepository";
+import { FeedbackVote } from "../../domain/entities/FeedbackVote";
 
 
 export class FeedbackServiceImpl implements IFeedbackService {

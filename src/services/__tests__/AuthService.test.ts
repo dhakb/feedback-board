@@ -2,8 +2,8 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { User } from "../../domain/entities/User";
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
-import { AuthServiceImpl } from "../AuthServiceImpl";
-import { IAuthService } from "../IAuthService";
+import { AuthServiceImpl } from "../auth/AuthServiceImpl";
+import { IAuthService } from "../auth/IAuthService";
 
 
 jest.mock("bcrypt");

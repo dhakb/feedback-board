@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import ICommentService from "../services/ICommentService";
+import ICommentService from "../services/comment/ICommentService";
 
 
 export class CommentController {

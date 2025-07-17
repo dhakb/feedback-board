@@ -1,7 +1,7 @@
-import { generateUUID } from "../utils/uuid";
+import { generateUUID } from "../../utils/uuid";
 import ICommentService from "./ICommentService";
-import { Comment } from "../domain/entities/Comment";
-import { CreateCommentDTO, ICommentRepository } from "../domain/repositories/ICommentRepository";
+import { Comment } from "../../domain/entities/Comment";
+import { CreateCommentDTO, ICommentRepository } from "../../domain/repositories/ICommentRepository";
 
 
 export class CommentServiceImpl implements ICommentService {

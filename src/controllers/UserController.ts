@@ -1,6 +1,6 @@
 import type { Response } from "express";
 
-import { IUserService } from "../services/IUserService";
+import { IUserService } from "../services/user/IUserService";
 import { AuthRequest } from "../middleware/authenticate.middleware";
 
 

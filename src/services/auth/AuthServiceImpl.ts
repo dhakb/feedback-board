@@ -1,10 +1,10 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { generateUUID } from "../utils/uuid";
-import { Role, User } from "../domain/entities/User";
-import { IUserRepository } from "../domain/repositories/IUserRepository";
+import { generateUUID } from "../../utils/uuid";
+import { Role, User } from "../../domain/entities/User";
+import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { IAuthService, LoginResult } from "./IAuthService";
-import { ConflictError, UnauthorizedError } from "../errors/ApiError";
+import { ConflictError, UnauthorizedError } from "../../errors/ApiError";
 
 
 const JWT_SECRET = process.env.JWT_SECRET || "dev-jwt-secret";
