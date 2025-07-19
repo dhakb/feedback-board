@@ -10,7 +10,7 @@ export class FeedbackController {
 
   async create(req: Request, res: Response) {
     const {title, description, category, authorId} = req.body;
-    const feedback = await this.service.createFeedback({title, description, category, authorId});
+    const feedback = await this.service.create({title, description, category, authorId});
 
     res.status(201).json({
       status: "success",
