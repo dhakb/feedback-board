@@ -173,7 +173,7 @@ describe("FeedbackService", () => {
       feedbackRepository.findById.mockResolvedValue(mockFeedback);
       feedbackRepository.update.mockResolvedValue({...mockFeedback, ...input});
 
-      const updatedFeedback = await feedbackService.updateFeedbackByUser("feedback-1", "user-1", input);
+      const updatedFeedback = await feedbackService.updateByUser("feedback-1", "user-1", input);
 
       expect(feedbackRepository.update).toHaveBeenCalledTimes(1);
       expect(updatedFeedback.title).toBe("Updated Title");
@@ -188,7 +188,7 @@ describe("FeedbackService", () => {
 
       feedbackRepository.update.mockResolvedValue({...mockFeedback, ...input});
 
-      await expect(feedbackService.updateFeedbackByUser("feedback-1", "user-1", input)).rejects.toThrow(ForbiddenError);
+      await expect(feedbackService.updateByUser("feedback-1", "user-1", input)).rejects.toThrow(ForbiddenError);
       expect(feedbackRepository.update).not.toHaveBeenCalled();
     });
 
@@ -202,8 +202,8 @@ describe("FeedbackService", () => {
 
       const invalidFields = Object.keys(input);
 
-      await expect(feedbackService.updateFeedbackByUser("feedback-1", "user-1", input)).rejects.toThrow(ForbiddenError);
-      await expect(feedbackService.updateFeedbackByUser("feedback-1", "user-1", input)).rejects.toThrow(`Not allowed to update: ${invalidFields.join((", "))}`);
+      await expect(feedbackService.updateByUser("feedback-1", "user-1", input)).rejects.toThrow(ForbiddenError);
+      await expect(feedbackService.updateByUser("feedback-1", "user-1", input)).rejects.toThrow(`Not allowed to update: ${invalidFields.join((", "))}`);
 
       expect(feedbackRepository.update).not.toHaveBeenCalled();
     });
@@ -212,7 +212,7 @@ describe("FeedbackService", () => {
       feedbackRepository.findById.mockResolvedValue(mockFeedback);
       feedbackRepository.update.mockResolvedValue({...mockFeedback, status: "COMPLETED"});
 
-      const feedback = await feedbackService.updateFeedBackStatusByAdmin("feedback-1", "COMPLETED");
+      const feedback = await feedbackService.updateStatusByAdmin("feedback-1", "COMPLETED");
 
       expect(feedbackRepository.update).toHaveBeenCalledWith("feedback-1", {status: "COMPLETED"});
       expect(feedback.status).toBe("COMPLETED");

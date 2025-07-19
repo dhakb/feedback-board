@@ -69,7 +69,7 @@ export class FeedbackController {
     const feedbackId = req.params.id;
     const userId = req.user!.userId;
 
-    const feedback = await this.service.updateFeedbackByUser(feedbackId, userId, data);
+    const feedback = await this.service.updateByUser(feedbackId, userId, data);
 
     res.status(200).json({
       status: "success",
@@ -83,7 +83,7 @@ export class FeedbackController {
     const {id: feedbackId} = req.params;
     const {status} = req.body;
 
-    const feedback = await this.service.updateFeedBackStatusByAdmin(feedbackId, status);
+    const feedback = await this.service.updateStatusByAdmin(feedbackId, status);
 
     res.status(200).json({
       status: "success",

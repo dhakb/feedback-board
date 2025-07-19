@@ -14,7 +14,7 @@ export interface IFeedbackService {
 
   delete(feedbackId: string, userId: string, role: Role): Promise<void>;
 
-  updateFeedbackByUser(feedbackId: string, userId: string, data: Omit<UpdateFeedbackDTO, "status">): Promise<Feedback>;
+  updateByUser(feedbackId: string, userId: string, data: Omit<UpdateFeedbackDTO, "status">): Promise<Feedback>;
 
-  updateFeedBackStatusByAdmin(feedbackId: string, status: FeedbackStatus): Promise<Feedback>;
+  updateStatusByAdmin(feedbackId: string, status: FeedbackStatus): Promise<Feedback>;
 }
