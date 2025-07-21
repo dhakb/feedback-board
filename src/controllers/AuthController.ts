@@ -24,7 +24,7 @@ export class AuthController {
 
     const result = await this.authService.login(email, password);
 
-    res.status(201).json({
+    res.status(200).json({
       status: "success",
       data: {
         result
