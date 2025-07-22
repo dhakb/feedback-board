@@ -94,4 +94,19 @@ describe("Feedback E2E", () => {
       })
     );
   });
+
+  it("should list all feedbacks", async () => {
+    const loginRes = await request(app)
+      .post("/api/auth/login")
+      .send({email: testUser.email, password: testUser.password});
+
+    const token = loginRes.body.data.result.token;
+
+    const res = await request(app)
+      .get("/api/feedback/")
+      .set("Authorization", `Bearer ${token}`)
+
+    expect(res.status).toBe(200);
+    expect(res.body.data.feedbacks).toBeDefined();
+  })
 });
