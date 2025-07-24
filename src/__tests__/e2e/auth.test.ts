@@ -8,19 +8,20 @@ const app = createApp();
 const prisma = new PrismaClient();
 
 
-beforeAll(async () => {
-  //: run migrations, seed test db
-});
-
-afterAll(async () => {
-  await prisma.$disconnect();
-});
-
 beforeEach(async () => {
   await prisma.comment.deleteMany({});
   await prisma.feedback.deleteMany({});
   await prisma.feedbackVote.deleteMany({});
   await prisma.user.deleteMany({});
+});
+
+afterAll(async () => {
+  await prisma.comment.deleteMany({});
+  await prisma.feedback.deleteMany({});
+  await prisma.feedbackVote.deleteMany({});
+  await prisma.user.deleteMany({});
+
+  await prisma.$disconnect();
 });
 
 describe("Auth E2E", () => {
