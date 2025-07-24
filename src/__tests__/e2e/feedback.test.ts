@@ -8,10 +8,6 @@ const app = createApp();
 const prisma = new PrismaClient();
 
 
-afterAll(async () => {
-  await prisma.$disconnect();
-});
-
 const testUser = {
   name: "E2E User",
   email: "e2e@test.com",
@@ -29,22 +25,10 @@ const testFeedback = {
   createdAt: new Date()
 };
 
-beforeEach(async () => {
-  await prisma.comment.deleteMany();
-  await prisma.feedback.deleteMany();
-  await prisma.feedbackVote.deleteMany();
-  await prisma.user.deleteMany({});
-});
 
-afterAll(async () => {
-  await prisma.comment.deleteMany({});
-  await prisma.feedback.deleteMany({});
-  await prisma.feedbackVote.deleteMany({});
-  await prisma.user.deleteMany({});
-});
-
-describe("Feedback E2E", () => {
-  beforeEach(async () => {
+beforeAll(async () => {
+  const user = await prisma.user.findUnique({where: {email: testUser.email}});
+  if (!user) {
     const hashedPassword = await bcrypt.hash(testUser.password, 10);
 
     await prisma.user.create({
@@ -54,11 +38,22 @@ describe("Feedback E2E", () => {
         name: testUser.name
       }
     });
-  });
+  }
+});
 
+afterAll(async () => {
+  await prisma.comment.deleteMany({});
+  await prisma.feedback.deleteMany({});
+  await prisma.feedbackVote.deleteMany({});
+  await prisma.user.deleteMany({});
+
+  await prisma.$disconnect();
+});
+
+
+describe("Feedback E2E", () => {
   it("should create a feedback", async () => {
     const author = await prisma.user.findUnique({where: {email: testUser.email}});
-
     const input = {
       title: testFeedback.title,
       description: testFeedback.description,
@@ -70,7 +65,7 @@ describe("Feedback E2E", () => {
       .post("/api/auth/login")
       .send({email: testUser.email, password: testUser.password});
 
-    const token = loginRes.body.data.result.token;
+    const token = loginRes.body?.data?.result?.token;
 
     const res = await request(app)
       .post("/api/feedback/")
@@ -100,13 +95,13 @@ describe("Feedback E2E", () => {
       .post("/api/auth/login")
       .send({email: testUser.email, password: testUser.password});
 
-    const token = loginRes.body.data.result.token;
+    const token = loginRes?.body?.data?.result?.token;
 
     const res = await request(app)
       .get("/api/feedback/")
-      .set("Authorization", `Bearer ${token}`)
+      .set("Authorization", `Bearer ${token}`);
 
     expect(res.status).toBe(200);
     expect(res.body.data.feedbacks).toBeDefined();
-  })
+  });
 });

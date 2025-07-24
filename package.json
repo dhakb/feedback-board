@@ -8,6 +8,7 @@
     "build": "npm run clean && tsc",
     "start": "node dist/server.js",
     "test": "jest",
+    "test:e2e": "jest --runInBand",
     "clear-test": "jest --clearCache"
   },
   "prisma": {
