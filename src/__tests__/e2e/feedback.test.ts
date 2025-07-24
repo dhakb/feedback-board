@@ -43,8 +43,8 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await prisma.comment.deleteMany({});
-  await prisma.feedback.deleteMany({});
   await prisma.feedbackVote.deleteMany({});
+  await prisma.feedback.deleteMany({});
   await prisma.user.deleteMany({});
 
   await prisma.$disconnect();
@@ -103,5 +103,55 @@ describe("Feedback E2E", () => {
 
     expect(res.status).toBe(200);
     expect(res.body.data.feedbacks).toBeDefined();
+  });
+
+
+  it("should get a feedback by ID", async () => {
+    const loginRes = await request(app)
+      .post("/api/auth/login")
+      .send({email: testUser.email, password: testUser.password});
+
+    const token = loginRes?.body?.data?.result?.token;
+
+    const user = await prisma.user.findUnique({where: {email: testUser.email}, include: {feedbacks: true}});
+    const feedbackId = user!.feedbacks[0].id;
+
+    const res = await request(app)
+      .get(`/api/feedback/${feedbackId}`)
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual(
+      expect.objectContaining({
+        status: "success",
+        data: {
+          feedback: expect.objectContaining({
+            id: expect.any(String),
+            title: testFeedback.title,
+            description: testFeedback.description,
+            category: testFeedback.category,
+            status: testFeedback.status,
+            authorId: user!.id
+          })
+        }
+      })
+    );
+  });
+
+  it("should upvote a feedback", async () => {
+    const loginRes = await request(app)
+      .post("/api/auth/login")
+      .send({email: testUser.email, password: testUser.password});
+
+    const token = loginRes?.body?.data?.result?.token;
+
+    const user = await prisma.user.findUnique({where: {email: testUser.email}, include: {feedbacks: true}});
+    const feedbackId = user!.feedbacks[0].id;
+
+    const res = await request(app)
+      .post(`/api/feedback/${feedbackId}/upvote`)
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(res.status).toBe(204);
   });
 });
