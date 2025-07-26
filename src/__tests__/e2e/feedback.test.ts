@@ -154,4 +154,58 @@ describe("Feedback E2E", () => {
 
     expect(res.status).toBe(204);
   });
+
+  it("should let user update feedback on allowed fields", async () => {
+    const loginRes = await request(app)
+      .post("/api/auth/login")
+      .send({email: testUser.email, password: testUser.password});
+
+    const token = loginRes?.body?.data?.result?.token;
+
+    const user = await prisma.user.findUnique({where: {email: testUser.email}, include: {feedbacks: true}});
+    const feedbackId = user!.feedbacks[0].id;
+
+    const res = await request(app)
+      .patch(`/api/feedback/${feedbackId}`)
+      .set("Authorization", `Bearer ${token}`)
+      .send({title: "new title", description: "new desc", category: "new category"});
+
+    expect(res.status).toBe(200)
+    expect(res.body).toEqual(
+      expect.objectContaining({
+        status: "success",
+        data: {
+          feedback: expect.objectContaining({
+            id: expect.any(String),
+            title: "new title",
+            description: "new desc",
+            category: "new category",
+            status: testFeedback.status,
+            authorId: user!.id
+          })
+        }
+      })
+    );
+  });
+
+  it("should delete a feedback", async () => {
+    const loginRes = await request(app)
+      .post("/api/auth/login")
+      .send({email: testUser.email, password: testUser.password});
+
+    const token = loginRes?.body?.data?.result?.token;
+
+    const user = await prisma.user.findUnique({where: {email: testUser.email}, include: {feedbacks: true}});
+    const feedbackId = user!.feedbacks[0].id;
+
+    const res = await request(app)
+      .delete(`/api/feedback/${feedbackId}`)
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(res.status).toBe(204);
+  });
+
+  it("should let the admin update the feedback status", async () => {
+
+  })
 });
