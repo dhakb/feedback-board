@@ -23,7 +23,7 @@ export class CommentController {
 
     const comments = await this.commentService.findAllByFeedbackId(feedbackId);
 
-    res.status(201).json({
+    res.status(200).json({
       status: "success",
       data: {
         comments
