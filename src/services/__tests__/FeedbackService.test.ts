@@ -39,7 +39,8 @@ describe("FeedbackService", () => {
 
     feedbackVoteRepository = {
       find: jest.fn(),
-      create: jest.fn()
+      create: jest.fn(),
+      delete: jest.fn()
     };
 
     feedbackService = new FeedbackServiceImpl(feedbackRepository, feedbackVoteRepository);
