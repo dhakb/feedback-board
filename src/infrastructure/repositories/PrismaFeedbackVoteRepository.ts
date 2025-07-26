@@ -11,7 +11,11 @@ export class PrismaFeedbackVoteRepository implements IFeedbackVoteRepository {
     return prisma.feedbackVote.create({data});
   }
 
-  find(userId: string, feedbackId: string): Promise<FeedbackVote | null> {
+  async find(userId: string, feedbackId: string): Promise<FeedbackVote | null> {
     return prisma.feedbackVote.findUnique({where: {userId_feedbackId: {userId, feedbackId}}});
+  }
+
+  async delete(userId: string, feedbackId: string): Promise<void> {
+    await prisma.feedbackVote.delete({where: {userId_feedbackId: {userId, feedbackId}}});
   }
 }
