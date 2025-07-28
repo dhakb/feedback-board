@@ -1,6 +1,11 @@
 import bcrypt from "bcrypt";
-import { PrismaClient } from "../../../generated/prisma";
+import request from "supertest";
+import { createApp } from "../../app";
 import { TEST_USER, TEST_FEEDBACK } from "./mocks";
+import { PrismaClient } from "../../../generated/prisma";
+
+
+const app = createApp();
 
 
 const prisma = new PrismaClient();
@@ -23,4 +28,12 @@ export async function createTestUser() {
       name: TEST_USER.name
     }
   });
+}
+
+export async function loginTestUser(): Promise<{ token: string }> {
+  const res = await request(app)
+    .post("/api/auth/login")
+    .send({email: TEST_USER.email, password: TEST_USER.password});
+
+  return {token: res.body?.data?.result?.token};
 }

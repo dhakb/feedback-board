@@ -22,8 +22,6 @@ afterAll(async () => {
 
 describe("Auth E2E", () => {
 
-  let token: string;
-
   describe("Register User ", () => {
     it("POST /auth/register", async () => {
       const res = await request(app)

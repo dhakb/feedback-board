@@ -1,9 +1,8 @@
-import bcrypt from "bcrypt";
 import request from "supertest";
 import { createApp } from "../../app";
-import { clearDB, createTestUser } from "../utils/db";
 import { PrismaClient } from "../../../generated/prisma";
 import { TEST_USER, TEST_FEEDBACK } from "../utils/mocks";
+import { clearDB, createTestUser, loginTestUser } from "../utils/db";
 
 
 const app = createApp();
@@ -33,11 +32,7 @@ describe("Comment E2E", () => {
       authorId: author!.id
     };
 
-    const loginRes = await request(app)
-      .post("/api/auth/login")
-      .send({email: TEST_USER.email, password: TEST_USER.password});
-
-    const token = loginRes.body?.data?.result?.token;
+    const {token} = await loginTestUser();
 
     const feedbackRes = await request(app)
       .post("/api/feedback/")
@@ -75,11 +70,7 @@ describe("Comment E2E", () => {
     const author = await prisma.user.findUnique({where: {email: TEST_USER.email}, include: {feedbacks: true}});
     const feedbackId = author!.feedbacks[0].id;
 
-    const loginRes = await request(app)
-      .post("/api/auth/login")
-      .send({email: TEST_USER.email, password: TEST_USER.password});
-
-    const token = loginRes.body?.data?.result?.token;
+    const {token} = await loginTestUser();
 
     const res = await request(app)
       .get(`/api/comment/:${feedbackId}`)

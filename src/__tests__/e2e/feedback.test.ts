@@ -1,9 +1,9 @@
-import bcrypt from "bcrypt";
 import request from "supertest";
 import { createApp } from "../../app";
 import { clearDB, createTestUser } from "../utils/db";
 import { PrismaClient } from "../../../generated/prisma";
 import { TEST_USER, TEST_FEEDBACK } from "../utils/mocks";
+import { loginTestUser } from "../utils/db";
 
 
 const app = createApp();
@@ -33,11 +33,7 @@ describe("Feedback E2E", () => {
       authorId: author!.id
     };
 
-    const loginRes = await request(app)
-      .post("/api/auth/login")
-      .send({email: TEST_USER.email, password: TEST_USER.password});
-
-    const token = loginRes.body?.data?.result?.token;
+    const {token} = await loginTestUser();
 
     const res = await request(app)
       .post("/api/feedback/")
@@ -63,11 +59,7 @@ describe("Feedback E2E", () => {
   });
 
   it("should list all feedbacks", async () => {
-    const loginRes = await request(app)
-      .post("/api/auth/login")
-      .send({email: TEST_USER.email, password: TEST_USER.password});
-
-    const token = loginRes?.body?.data?.result?.token;
+    const {token} = await loginTestUser();
 
     const res = await request(app)
       .get("/api/feedback/")
@@ -79,11 +71,7 @@ describe("Feedback E2E", () => {
 
 
   it("should get a feedback by ID", async () => {
-    const loginRes = await request(app)
-      .post("/api/auth/login")
-      .send({email: TEST_USER.email, password: TEST_USER.password});
-
-    const token = loginRes?.body?.data?.result?.token;
+    const {token} = await loginTestUser();
 
     const user = await prisma.user.findUnique({where: {email: TEST_USER.email}, include: {feedbacks: true}});
     const feedbackId = user!.feedbacks[0].id;
@@ -111,11 +99,7 @@ describe("Feedback E2E", () => {
   });
 
   it("should upvote a feedback", async () => {
-    const loginRes = await request(app)
-      .post("/api/auth/login")
-      .send({email: TEST_USER.email, password: TEST_USER.password});
-
-    const token = loginRes?.body?.data?.result?.token;
+    const {token} = await loginTestUser();
 
     const user = await prisma.user.findUnique({where: {email: TEST_USER.email}, include: {feedbacks: true}});
     const feedbackId = user!.feedbacks[0].id;
@@ -128,11 +112,7 @@ describe("Feedback E2E", () => {
   });
 
   it("should let user update feedback on allowed fields", async () => {
-    const loginRes = await request(app)
-      .post("/api/auth/login")
-      .send({email: TEST_USER.email, password: TEST_USER.password});
-
-    const token = loginRes?.body?.data?.result?.token;
+    const {token} = await loginTestUser();
 
     const user = await prisma.user.findUnique({where: {email: TEST_USER.email}, include: {feedbacks: true}});
     const feedbackId = user!.feedbacks[0].id;
@@ -161,11 +141,7 @@ describe("Feedback E2E", () => {
   });
 
   it("should delete a feedback", async () => {
-    const loginRes = await request(app)
-      .post("/api/auth/login")
-      .send({email: TEST_USER.email, password: TEST_USER.password});
-
-    const token = loginRes?.body?.data?.result?.token;
+    const {token} = await loginTestUser();
 
     const user = await prisma.user.findUnique({where: {email: TEST_USER.email}, include: {feedbacks: true}});
     const feedbackId = user!.feedbacks[0].id;
