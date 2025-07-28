@@ -5,7 +5,6 @@ export const TEST_USER = {
 };
 
 export const TEST_FEEDBACK = {
-  id: "feedback-1",
   title: "Dark mode",
   description: "Add dark mode support",
   category: "UI",

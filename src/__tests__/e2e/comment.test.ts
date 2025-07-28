@@ -1,8 +1,15 @@
 import request from "supertest";
 import { createApp } from "../../app";
 import { PrismaClient } from "../../../generated/prisma";
-import { TEST_USER, TEST_FEEDBACK } from "../utils/mocks";
-import { clearDB, createTestUser, loginTestUser } from "../utils/db";
+import {
+  clearDB,
+  createCommentForTestUser,
+  createFeedbackForTestUser,
+  createTestUser,
+  getTestUser,
+  getTestUserWithFeedbacks,
+  loginTestUser
+} from "../utils/db";
 
 
 const app = createApp();
@@ -23,34 +30,23 @@ afterAll(async () => {
 
 
 describe("Comment E2E", () => {
-  it("should create a comment", async () => {
-    const author = await prisma.user.findUnique({where: {email: TEST_USER.email}});
-    const feedBackInput = {
-      title: TEST_FEEDBACK.title,
-      description: TEST_FEEDBACK.description,
-      category: TEST_FEEDBACK.category,
-      authorId: author!.id
+  it("POST /should create a comment", async () => {
+    const author = await getTestUser();
+
+    const feedback = await createFeedbackForTestUser(author!.id);
+
+    const input = {
+      authorId: author!.id,
+      feedbackId: feedback.id,
+      content: "Test Comment"
     };
 
     const {token} = await loginTestUser();
 
-    const feedbackRes = await request(app)
-      .post("/api/feedback/")
-      .set("Authorization", `Bearer ${token}`)
-      .send(feedBackInput);
-
-    const feedbackId = feedbackRes.body.data.feedback.id;
-
-    const commentInput = {
-      authorId: author!.id,
-      feedbackId: feedbackId,
-      content: "test comment"
-    };
-
     const res = await request(app)
       .post("/api/comment/")
       .set("Authorization", `Bearer ${token}`)
-      .send(commentInput);
+      .send(input);
 
     expect(res.status).toBe(201);
     expect(res.body).toEqual(
@@ -59,23 +55,40 @@ describe("Comment E2E", () => {
         data: {
           comment: expect.objectContaining({
             id: expect.any(String),
-            content: commentInput.content
+            content: input.content,
+            feedbackId: feedback.id
           })
         }
       })
     );
   });
 
-  it("should return all comments by feedbackId", async () => {
-    const author = await prisma.user.findUnique({where: {email: TEST_USER.email}, include: {feedbacks: true}});
+  it("GET /should return all comments by feedbackId", async () => {
+    const author = await getTestUserWithFeedbacks();
     const feedbackId = author!.feedbacks[0].id;
+
+    await createCommentForTestUser(author!.id, feedbackId);
 
     const {token} = await loginTestUser();
 
     const res = await request(app)
-      .get(`/api/comment/:${feedbackId}`)
+      .get(`/api/comment/${feedbackId}`)
       .set("Authorization", `Bearer ${token}`);
 
     expect(res.status).toBe(200);
+    expect(res.body).toEqual(
+      expect.objectContaining({
+        status: "success",
+        data: {
+          comments: expect.arrayContaining([
+            expect.objectContaining({
+              id: expect.any(String),
+              content: expect.any(String),
+              feedbackId
+            })
+          ])
+        }
+      })
+    );
   });
 });

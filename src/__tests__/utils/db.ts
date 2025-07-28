@@ -30,10 +30,44 @@ export async function createTestUser() {
   });
 }
 
+export async function getTestUser() {
+  return prisma.user.findUnique({
+    where: {email: TEST_USER.email}
+  });
+}
+
+export async function getTestUserWithFeedbacks() {
+  return prisma.user.findUnique({
+    where: {email: TEST_USER.email},
+    include: {feedbacks: true}
+  });
+}
+
 export async function loginTestUser(): Promise<{ token: string }> {
   const res = await request(app)
     .post("/api/auth/login")
     .send({email: TEST_USER.email, password: TEST_USER.password});
 
   return {token: res.body?.data?.result?.token};
+}
+
+export async function createFeedbackForTestUser(userId: string) {
+  return prisma.feedback.create({
+    data: {
+      title: TEST_FEEDBACK.title,
+      description: TEST_FEEDBACK.description,
+      category: TEST_FEEDBACK.category,
+      authorId: userId
+    }
+  });
+}
+
+export async function createCommentForTestUser(userId: string, feedbackId: string) {
+  return prisma.comment.create({
+    data: {
+      content: "Test Comment",
+      authorId: userId,
+      feedbackId
+    }
+  });
 }
