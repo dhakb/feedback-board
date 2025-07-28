@@ -24,7 +24,7 @@ afterAll(async () => {
 
 
 describe("Feedback E2E", () => {
-  it("should create a feedback", async () => {
+  it("POST /should create a feedback", async () => {
     const author = await getTestUser();
     const input = {
       title: TEST_FEEDBACK.title,
@@ -58,7 +58,7 @@ describe("Feedback E2E", () => {
     );
   });
 
-  it("should list all feedbacks", async () => {
+  it("GET /should list all feedbacks", async () => {
     const {token} = await loginTestUser();
 
     const res = await request(app)
@@ -70,7 +70,7 @@ describe("Feedback E2E", () => {
   });
 
 
-  it("should get a feedback by ID", async () => {
+  it("GET /should get a feedback by ID", async () => {
     const {token} = await loginTestUser();
 
     const author = await getTestUserWithFeedbacks();
@@ -98,7 +98,7 @@ describe("Feedback E2E", () => {
     );
   });
 
-  it("should upvote a feedback", async () => {
+  it("POST /should upvote a feedback", async () => {
     const {token} = await loginTestUser();
 
     const author = await getTestUserWithFeedbacks();
@@ -111,7 +111,7 @@ describe("Feedback E2E", () => {
     expect(res.status).toBe(204);
   });
 
-  it("should let user update feedback on allowed fields", async () => {
+  it("PATCH /should let user update feedback on allowed fields", async () => {
     const {token} = await loginTestUser();
 
     const author = await getTestUserWithFeedbacks();
@@ -140,7 +140,7 @@ describe("Feedback E2E", () => {
     );
   });
 
-  it("should delete a feedback", async () => {
+  it("DELETE /should delete a feedback", async () => {
     const {token} = await loginTestUser();
 
     const author = await getTestUserWithFeedbacks();
