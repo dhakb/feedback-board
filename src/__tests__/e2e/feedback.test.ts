@@ -1,6 +1,13 @@
 import request from "supertest";
 import { createApp } from "../../app";
-import { clearDB, createTestUser, getTestUser, getTestUserWithFeedbacks } from "../utils/db";
+import {
+  clearDB, createFeedbackForTestUser,
+  createTestAdmin,
+  createTestUser,
+  getTestUser,
+  getTestUserWithFeedbacks,
+  loginTestAdmin
+} from "../utils/db";
 import { PrismaClient } from "../../../generated/prisma";
 import { TEST_USER, TEST_FEEDBACK } from "../utils/mocks";
 import { loginTestUser } from "../utils/db";
@@ -14,6 +21,7 @@ beforeAll(async () => {
   await clearDB();
 
   await createTestUser();
+  await createTestAdmin();
 });
 
 afterAll(async () => {
@@ -153,7 +161,56 @@ describe("Feedback E2E", () => {
     expect(res.status).toBe(204);
   });
 
-  it("should let the admin update the feedback status", async () => {
+  it("PATCH /should let the admin update the feedback status", async () => {
+    const {token} = await loginTestAdmin();
 
+    let author = await getTestUser();
+    await createFeedbackForTestUser(author!.id);
+    let author_with_feedbacks = await getTestUserWithFeedbacks();
+    const feedbackId = author_with_feedbacks!.feedbacks[0].id;
+
+    const res = await request(app)
+      .patch(`/api/feedback/${feedbackId}/status`)
+      .set("Authorization", `Bearer ${token}`)
+      .send({status: "IN_PROGRESS"});
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual(
+      expect.objectContaining({
+        status: "success",
+        data: {
+          feedback: expect.objectContaining({
+            id: expect.any(String),
+            title: TEST_FEEDBACK.title,
+            description: TEST_FEEDBACK.description,
+            category: TEST_FEEDBACK.category,
+            status: "IN_PROGRESS",
+            authorId: author!.id
+          })
+        }
+      })
+    );
   });
+
+  it("should throw ForbiddenError non-admin updating Feedback status", async () => {
+    const {token} = await loginTestUser();
+
+    let author = await getTestUser();
+    await createFeedbackForTestUser(author!.id);
+    let author_with_feedbacks = await getTestUserWithFeedbacks();
+    const feedbackId = author_with_feedbacks!.feedbacks[0].id;
+
+    const res = await request(app)
+      .patch(`/api/feedback/${feedbackId}/status`)
+      .set("Authorization", `Bearer ${token}`)
+      .send({status: "IN_PROGRESS"});
+
+    expect(res.status).toBe(403);
+    expect(res.body).toEqual(
+      expect.objectContaining({
+        error: expect.any(String),
+      })
+    );
+  });
+
 });

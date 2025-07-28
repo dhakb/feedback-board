@@ -13,3 +13,10 @@ export const TEST_FEEDBACK = {
   authorId: "user-1",
   createdAt: new Date()
 };
+
+export const TEST_ADMIN = {
+  name: "E2E Test Admin",
+  email: "e2e@testadmin.com",
+  password: "unsafepassword",
+  role: "ADMIN"
+}

@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import request from "supertest";
 import { createApp } from "../../app";
-import { TEST_USER, TEST_FEEDBACK } from "./mocks";
+import { TEST_USER, TEST_FEEDBACK, TEST_ADMIN } from "./mocks";
 import { PrismaClient } from "../../../generated/prisma";
 
 
@@ -70,4 +70,25 @@ export async function createCommentForTestUser(userId: string, feedbackId: strin
       feedbackId
     }
   });
+}
+
+export async function createTestAdmin() {
+  const hashedPassword = await bcrypt.hash(TEST_ADMIN.password, 10);
+
+  await prisma.user.create({
+    data: {
+      email: TEST_ADMIN.email,
+      password: hashedPassword,
+      name: TEST_ADMIN.name,
+      role: "ADMIN"
+    }
+  });
+}
+
+export async function loginTestAdmin(): Promise<{ token: string }> {
+  const res = await request(app)
+    .post("/api/auth/login")
+    .send({email: TEST_ADMIN.email, password: TEST_ADMIN.password});
+
+  return {token: res.body?.data?.result?.token};
 }
