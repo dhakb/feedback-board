@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import request from "supertest";
 import { createApp } from "../../app";
 import { clearDB } from "../utils/db";
+import { TEST_USER } from "../utils/mocks";
 import { PrismaClient } from "../../../generated/prisma";
 
 
@@ -20,11 +21,6 @@ afterAll(async () => {
 });
 
 describe("Auth E2E", () => {
-  const testUser = {
-    name: "E2E User",
-    email: "e2e@test.com",
-    password: "password123"
-  };
 
   let token: string;
 
@@ -32,7 +28,7 @@ describe("Auth E2E", () => {
     it("POST /auth/register", async () => {
       const res = await request(app)
         .post("/api/auth/register")
-        .send(testUser);
+        .send(TEST_USER);
 
       expect(res.status).toBe(201);
 
@@ -42,8 +38,8 @@ describe("Auth E2E", () => {
           data: {
             user: expect.objectContaining({
               id: expect.any(String),
-              name: testUser.name,
-              email: testUser.email,
+              name: TEST_USER.name,
+              email: TEST_USER.email,
               role: "USER"
             })
           }
@@ -63,15 +59,15 @@ describe("Auth E2E", () => {
     it("should throw if email is already taken", async () => {
       await prisma.user.create({
         data: {
-          email: testUser.email,
-          password: testUser.password,
-          name: testUser.name
+          email: TEST_USER.email,
+          password: TEST_USER.password,
+          name: TEST_USER.name
         }
       });
 
       const res = await request(app)
         .post("/api/auth/register")
-        .send(testUser);
+        .send(TEST_USER);
 
       expect(res.status).toBe(409);
       expect(res.body).toHaveProperty("status", "fail");
@@ -80,13 +76,13 @@ describe("Auth E2E", () => {
 
   describe("POST /auth/login", () => {
     beforeEach(async () => {
-      const hashedPassword = await bcrypt.hash(testUser.password, 10);
+      const hashedPassword = await bcrypt.hash(TEST_USER.password, 10);
 
       await prisma.user.create({
         data: {
-          email: testUser.email,
+          email: TEST_USER.email,
           password: hashedPassword,
-          name: testUser.name
+          name: TEST_USER.name
         }
       });
     });
@@ -94,7 +90,7 @@ describe("Auth E2E", () => {
     it("should login the user and return a token", async () => {
       const res = await request(app)
         .post("/api/auth/login")
-        .send({email: testUser.email, password: testUser.password});
+        .send({email: TEST_USER.email, password: TEST_USER.password});
 
       expect(res.status).toBe(200);
       expect(res.body).toEqual(
@@ -104,8 +100,8 @@ describe("Auth E2E", () => {
             result: {
               user: expect.objectContaining({
                 id: expect.any(String),
-                name: testUser.name,
-                email: testUser.email,
+                name: TEST_USER.name,
+                email: TEST_USER.email,
                 role: "USER"
               }),
               token: expect.any(String)
@@ -118,7 +114,7 @@ describe("Auth E2E", () => {
     it("should fail with wrong email", async () => {
       const res = await request(app)
         .post("/api/auth/login")
-        .send({email: "doesnotexist@test.com", password: testUser.password});
+        .send({email: "doesnotexist@test.com", password: TEST_USER.password});
 
       expect(res.status).toBe(401);
     });
@@ -127,7 +123,7 @@ describe("Auth E2E", () => {
 
       const res = await request(app)
         .post("/api/auth/login")
-        .send({email: testUser.email, password: "wrongpassword"});
+        .send({email: TEST_USER.email, password: "wrongpassword"});
 
       expect(res.status).toBe(401);
     });

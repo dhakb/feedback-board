@@ -3,42 +3,25 @@ import request from "supertest";
 import { createApp } from "../../app";
 import { clearDB } from "../utils/db";
 import { PrismaClient } from "../../../generated/prisma";
+import { TEST_USER, TEST_FEEDBACK } from "../utils/mocks";
 
 
 const app = createApp();
 const prisma = new PrismaClient();
 
 
-const testUser = {
-  name: "E2E User",
-  email: "e2e@test.com",
-  password: "password123"
-};
-
-const testFeedback = {
-  id: "feedback-1",
-  title: "Dark mode",
-  description: "Add dark mode support",
-  category: "UI",
-  status: "OPEN",
-  upvotes: 0,
-  authorId: "user-1",
-  createdAt: new Date()
-};
-
-
 beforeAll(async () => {
   await clearDB();
 
-  const user = await prisma.user.findUnique({where: {email: testUser.email}});
+  const user = await prisma.user.findUnique({where: {email: TEST_USER.email}});
   if (!user) {
-    const hashedPassword = await bcrypt.hash(testUser.password, 10);
+    const hashedPassword = await bcrypt.hash(TEST_USER.password, 10);
 
     await prisma.user.create({
       data: {
-        email: testUser.email,
+        email: TEST_USER.email,
         password: hashedPassword,
-        name: testUser.name
+        name: TEST_USER.name
       }
     });
   }
@@ -53,17 +36,17 @@ afterAll(async () => {
 
 describe("Feedback E2E", () => {
   it("should create a feedback", async () => {
-    const author = await prisma.user.findUnique({where: {email: testUser.email}});
+    const author = await prisma.user.findUnique({where: {email: TEST_USER.email}});
     const input = {
-      title: testFeedback.title,
-      description: testFeedback.description,
-      category: testFeedback.category,
+      title: TEST_FEEDBACK.title,
+      description: TEST_FEEDBACK.description,
+      category: TEST_FEEDBACK.category,
       authorId: author!.id
     };
 
     const loginRes = await request(app)
       .post("/api/auth/login")
-      .send({email: testUser.email, password: testUser.password});
+      .send({email: TEST_USER.email, password: TEST_USER.password});
 
     const token = loginRes.body?.data?.result?.token;
 
@@ -79,10 +62,10 @@ describe("Feedback E2E", () => {
         data: {
           feedback: expect.objectContaining({
             id: expect.any(String),
-            title: testFeedback.title,
-            description: testFeedback.description,
-            category: testFeedback.category,
-            status: testFeedback.status,
+            title: TEST_FEEDBACK.title,
+            description: TEST_FEEDBACK.description,
+            category: TEST_FEEDBACK.category,
+            status: TEST_FEEDBACK.status,
             authorId: author!.id
           })
         }
@@ -93,7 +76,7 @@ describe("Feedback E2E", () => {
   it("should list all feedbacks", async () => {
     const loginRes = await request(app)
       .post("/api/auth/login")
-      .send({email: testUser.email, password: testUser.password});
+      .send({email: TEST_USER.email, password: TEST_USER.password});
 
     const token = loginRes?.body?.data?.result?.token;
 
@@ -109,11 +92,11 @@ describe("Feedback E2E", () => {
   it("should get a feedback by ID", async () => {
     const loginRes = await request(app)
       .post("/api/auth/login")
-      .send({email: testUser.email, password: testUser.password});
+      .send({email: TEST_USER.email, password: TEST_USER.password});
 
     const token = loginRes?.body?.data?.result?.token;
 
-    const user = await prisma.user.findUnique({where: {email: testUser.email}, include: {feedbacks: true}});
+    const user = await prisma.user.findUnique({where: {email: TEST_USER.email}, include: {feedbacks: true}});
     const feedbackId = user!.feedbacks[0].id;
 
     const res = await request(app)
@@ -127,10 +110,10 @@ describe("Feedback E2E", () => {
         data: {
           feedback: expect.objectContaining({
             id: expect.any(String),
-            title: testFeedback.title,
-            description: testFeedback.description,
-            category: testFeedback.category,
-            status: testFeedback.status,
+            title: TEST_FEEDBACK.title,
+            description: TEST_FEEDBACK.description,
+            category: TEST_FEEDBACK.category,
+            status: TEST_FEEDBACK.status,
             authorId: user!.id
           })
         }
@@ -141,11 +124,11 @@ describe("Feedback E2E", () => {
   it("should upvote a feedback", async () => {
     const loginRes = await request(app)
       .post("/api/auth/login")
-      .send({email: testUser.email, password: testUser.password});
+      .send({email: TEST_USER.email, password: TEST_USER.password});
 
     const token = loginRes?.body?.data?.result?.token;
 
-    const user = await prisma.user.findUnique({where: {email: testUser.email}, include: {feedbacks: true}});
+    const user = await prisma.user.findUnique({where: {email: TEST_USER.email}, include: {feedbacks: true}});
     const feedbackId = user!.feedbacks[0].id;
 
     const res = await request(app)
@@ -158,11 +141,11 @@ describe("Feedback E2E", () => {
   it("should let user update feedback on allowed fields", async () => {
     const loginRes = await request(app)
       .post("/api/auth/login")
-      .send({email: testUser.email, password: testUser.password});
+      .send({email: TEST_USER.email, password: TEST_USER.password});
 
     const token = loginRes?.body?.data?.result?.token;
 
-    const user = await prisma.user.findUnique({where: {email: testUser.email}, include: {feedbacks: true}});
+    const user = await prisma.user.findUnique({where: {email: TEST_USER.email}, include: {feedbacks: true}});
     const feedbackId = user!.feedbacks[0].id;
 
     const res = await request(app)
@@ -180,7 +163,7 @@ describe("Feedback E2E", () => {
             title: "new title",
             description: "new desc",
             category: "new category",
-            status: testFeedback.status,
+            status: TEST_FEEDBACK.status,
             authorId: user!.id
           })
         }
@@ -191,11 +174,11 @@ describe("Feedback E2E", () => {
   it("should delete a feedback", async () => {
     const loginRes = await request(app)
       .post("/api/auth/login")
-      .send({email: testUser.email, password: testUser.password});
+      .send({email: TEST_USER.email, password: TEST_USER.password});
 
     const token = loginRes?.body?.data?.result?.token;
 
-    const user = await prisma.user.findUnique({where: {email: testUser.email}, include: {feedbacks: true}});
+    const user = await prisma.user.findUnique({where: {email: TEST_USER.email}, include: {feedbacks: true}});
     const feedbackId = user!.feedbacks[0].id;
 
     const res = await request(app)
