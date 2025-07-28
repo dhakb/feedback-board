@@ -1,6 +1,6 @@
 import request from "supertest";
 import { createApp } from "../../app";
-import { clearDB, createTestUser } from "../utils/db";
+import { clearDB, createTestUser, getTestUser, getTestUserWithFeedbacks } from "../utils/db";
 import { PrismaClient } from "../../../generated/prisma";
 import { TEST_USER, TEST_FEEDBACK } from "../utils/mocks";
 import { loginTestUser } from "../utils/db";
@@ -25,7 +25,7 @@ afterAll(async () => {
 
 describe("Feedback E2E", () => {
   it("should create a feedback", async () => {
-    const author = await prisma.user.findUnique({where: {email: TEST_USER.email}});
+    const author = await getTestUser();
     const input = {
       title: TEST_FEEDBACK.title,
       description: TEST_FEEDBACK.description,
@@ -73,8 +73,8 @@ describe("Feedback E2E", () => {
   it("should get a feedback by ID", async () => {
     const {token} = await loginTestUser();
 
-    const user = await prisma.user.findUnique({where: {email: TEST_USER.email}, include: {feedbacks: true}});
-    const feedbackId = user!.feedbacks[0].id;
+    const author = await getTestUserWithFeedbacks();
+    const feedbackId = author!.feedbacks[0].id;
 
     const res = await request(app)
       .get(`/api/feedback/${feedbackId}`)
@@ -91,7 +91,7 @@ describe("Feedback E2E", () => {
             description: TEST_FEEDBACK.description,
             category: TEST_FEEDBACK.category,
             status: TEST_FEEDBACK.status,
-            authorId: user!.id
+            authorId: author!.id
           })
         }
       })
@@ -101,8 +101,8 @@ describe("Feedback E2E", () => {
   it("should upvote a feedback", async () => {
     const {token} = await loginTestUser();
 
-    const user = await prisma.user.findUnique({where: {email: TEST_USER.email}, include: {feedbacks: true}});
-    const feedbackId = user!.feedbacks[0].id;
+    const author = await getTestUserWithFeedbacks();
+    const feedbackId = author!.feedbacks[0].id;
 
     const res = await request(app)
       .post(`/api/feedback/${feedbackId}/upvote`)
@@ -114,8 +114,8 @@ describe("Feedback E2E", () => {
   it("should let user update feedback on allowed fields", async () => {
     const {token} = await loginTestUser();
 
-    const user = await prisma.user.findUnique({where: {email: TEST_USER.email}, include: {feedbacks: true}});
-    const feedbackId = user!.feedbacks[0].id;
+    const author = await getTestUserWithFeedbacks();
+    const feedbackId = author!.feedbacks[0].id;
 
     const res = await request(app)
       .patch(`/api/feedback/${feedbackId}`)
@@ -133,7 +133,7 @@ describe("Feedback E2E", () => {
             description: "new desc",
             category: "new category",
             status: TEST_FEEDBACK.status,
-            authorId: user!.id
+            authorId: author!.id
           })
         }
       })
@@ -143,8 +143,8 @@ describe("Feedback E2E", () => {
   it("should delete a feedback", async () => {
     const {token} = await loginTestUser();
 
-    const user = await prisma.user.findUnique({where: {email: TEST_USER.email}, include: {feedbacks: true}});
-    const feedbackId = user!.feedbacks[0].id;
+    const author = await getTestUserWithFeedbacks();
+    const feedbackId = author!.feedbacks[0].id;
 
     const res = await request(app)
       .delete(`/api/feedback/${feedbackId}`)
