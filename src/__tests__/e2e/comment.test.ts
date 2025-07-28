@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import request from "supertest";
 import { createApp } from "../../app";
-import { clearDB } from "../utils/db";
+import { clearDB, createTestUser } from "../utils/db";
 import { PrismaClient } from "../../../generated/prisma";
 import { TEST_USER, TEST_FEEDBACK } from "../utils/mocks";
 
@@ -13,18 +13,7 @@ const prisma = new PrismaClient();
 beforeAll(async () => {
   await clearDB();
 
-  const user = await prisma.user.findUnique({where: {email: TEST_USER.email}});
-  if (!user) {
-    const hashedPassword = await bcrypt.hash(TEST_USER.password, 10);
-
-    await prisma.user.create({
-      data: {
-        email: TEST_USER.email,
-        password: hashedPassword,
-        name: TEST_USER.name
-      }
-    });
-  }
+  await createTestUser();
 });
 
 afterAll(async () => {
