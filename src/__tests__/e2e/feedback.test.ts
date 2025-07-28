@@ -1,7 +1,8 @@
+import bcrypt from "bcrypt";
 import request from "supertest";
 import { createApp } from "../../app";
+import { clearDB } from "../utils/db";
 import { PrismaClient } from "../../../generated/prisma";
-import bcrypt from "bcrypt";
 
 
 const app = createApp();
@@ -27,6 +28,8 @@ const testFeedback = {
 
 
 beforeAll(async () => {
+  await clearDB();
+
   const user = await prisma.user.findUnique({where: {email: testUser.email}});
   if (!user) {
     const hashedPassword = await bcrypt.hash(testUser.password, 10);
@@ -42,10 +45,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await prisma.comment.deleteMany({});
-  await prisma.feedbackVote.deleteMany({});
-  await prisma.feedback.deleteMany({});
-  await prisma.user.deleteMany({});
+  await clearDB();
 
   await prisma.$disconnect();
 });
@@ -170,7 +170,7 @@ describe("Feedback E2E", () => {
       .set("Authorization", `Bearer ${token}`)
       .send({title: "new title", description: "new desc", category: "new category"});
 
-    expect(res.status).toBe(200)
+    expect(res.status).toBe(200);
     expect(res.body).toEqual(
       expect.objectContaining({
         status: "success",
@@ -207,5 +207,5 @@ describe("Feedback E2E", () => {
 
   it("should let the admin update the feedback status", async () => {
 
-  })
+  });
 });

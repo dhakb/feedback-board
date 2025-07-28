@@ -1,7 +1,8 @@
+import bcrypt from "bcrypt";
 import request from "supertest";
 import { createApp } from "../../app";
+import { clearDB } from "../utils/db";
 import { PrismaClient } from "../../../generated/prisma";
-import bcrypt from "bcrypt";
 
 
 const app = createApp();
@@ -26,6 +27,8 @@ const testFeedback = {
 };
 
 beforeAll(async () => {
+  await clearDB();
+
   const user = await prisma.user.findUnique({where: {email: testUser.email}});
   if (!user) {
     const hashedPassword = await bcrypt.hash(testUser.password, 10);
@@ -41,10 +44,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await prisma.comment.deleteMany({});
-  await prisma.feedbackVote.deleteMany({});
-  await prisma.feedback.deleteMany({});
-  await prisma.user.deleteMany({});
+  await clearDB();
 
   await prisma.$disconnect();
 });
@@ -100,7 +100,7 @@ describe("Comment E2E", () => {
 
   it("should return all comments by feedbackId", async () => {
     const author = await prisma.user.findUnique({where: {email: testUser.email}, include: {feedbacks: true}});
-    const feedbackId = author!.feedbacks[0].id
+    const feedbackId = author!.feedbacks[0].id;
 
     const loginRes = await request(app)
       .post("/api/auth/login")
@@ -110,9 +110,8 @@ describe("Comment E2E", () => {
 
     const res = await request(app)
       .get(`/api/comment/:${feedbackId}`)
-      .set("Authorization", `Bearer ${token}`)
+      .set("Authorization", `Bearer ${token}`);
 
-    console.log(res.body)
-    expect(res.status).toBe(200)
+    expect(res.status).toBe(200);
   });
 });

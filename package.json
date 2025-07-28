@@ -7,7 +7,7 @@
     "clean": "rimraf dist",
     "build": "npm run clean && tsc",
     "start": "node dist/server.js",
-    "test": "jest",
+    "test": "jest --runInBand",
     "test:e2e": "jest --runInBand",
     "clear-test": "jest --clearCache"
   },

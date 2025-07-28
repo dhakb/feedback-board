@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import request from "supertest";
 import { createApp } from "../../app";
+import { clearDB } from "../utils/db";
 import { PrismaClient } from "../../../generated/prisma";
 
 
@@ -9,17 +10,11 @@ const prisma = new PrismaClient();
 
 
 beforeEach(async () => {
-  await prisma.comment.deleteMany({});
-  await prisma.feedback.deleteMany({});
-  await prisma.feedbackVote.deleteMany({});
-  await prisma.user.deleteMany({});
+  await clearDB();
 });
 
 afterAll(async () => {
-  await prisma.comment.deleteMany({});
-  await prisma.feedbackVote.deleteMany({});
-  await prisma.feedback.deleteMany({});
-  await prisma.user.deleteMany({});
+  await clearDB();
 
   await prisma.$disconnect();
 });
