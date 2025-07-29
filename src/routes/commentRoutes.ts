@@ -5,12 +5,16 @@ import { CommentServiceImpl } from "../services/comment/CommentServiceImpl";
 import { PrismaCommentRepository } from "../infrastructure/repositories/PrismaCommentRepository";
 import { validateRequestInput } from "../middleware/validateRequestInput.middleware";
 import { createCommentSchema } from "../validators/comment.validator";
+import { PrismaFeedbackRepository } from "../infrastructure/repositories/PrismaFeedbackRepository";
+import { PrismaUserRepository } from "../infrastructure/repositories/PrismaUserRepository";
 
 
 const router = Router();
 
-const repository = new PrismaCommentRepository();
-const service = new CommentServiceImpl(repository);
+const userRepo = new PrismaUserRepository();
+const commentRepo = new PrismaCommentRepository();
+const feedbackRepo = new PrismaFeedbackRepository();
+const service = new CommentServiceImpl(commentRepo, feedbackRepo, userRepo);
 const controller = new CommentController(service);
 
 
