@@ -90,6 +90,8 @@ describe("ICommentService", () => {
   });
 
   it("should return all comment by feedback ID", async () => {
+    feedbackRepository.findById.mockResolvedValue(mockFeedback);
+
     const result = await commentService.findAllByFeedbackId("1");
 
     expect(commentRepository.findAllByFeedbackId).toHaveBeenCalledWith("1");

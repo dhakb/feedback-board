@@ -35,6 +35,11 @@ export class CommentServiceImpl implements ICommentService {
   }
 
   async findAllByFeedbackId(feedbackId: string): Promise<Comment[]> {
+    const feedback = await this.feedbackRepo.findById(feedbackId);
+    if (!feedback) {
+      throw new NotFoundError("Feedback with given ID not found");
+    }
+
     return await this.commentRepo.findAllByFeedbackId(feedbackId);
   }
 }
