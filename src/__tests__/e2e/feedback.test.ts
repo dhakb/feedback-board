@@ -32,79 +32,167 @@ afterAll(async () => {
 
 
 describe("Feedback E2E", () => {
-  it("POST /should create a feedback", async () => {
-    const author = await getTestUser();
-    const input = {
-      title: TEST_FEEDBACK.title,
-      description: TEST_FEEDBACK.description,
-      category: TEST_FEEDBACK.category,
-      authorId: author!.id
-    };
+  describe("POST /api/feedback", () => {
+    it("should create a feedback when authenticated and input is valid", async () => {
+      const author = await getTestUser();
+      const input = {
+        title: TEST_FEEDBACK.title,
+        description: TEST_FEEDBACK.description,
+        category: TEST_FEEDBACK.category,
+        authorId: author!.id
+      };
 
-    const {token} = await loginTestUser();
+      const {token} = await loginTestUser();
 
-    const res = await request(app)
-      .post("/api/feedback/")
-      .set("Authorization", `Bearer ${token}`)
-      .send(input);
+      const res = await request(app)
+        .post("/api/feedback/")
+        .set("Authorization", `Bearer ${token}`)
+        .send(input);
 
-    expect(res.status).toBe(201);
-    expect(res.body).toEqual(
-      expect.objectContaining({
-        status: "success",
-        data: {
-          feedback: expect.objectContaining({
-            id: expect.any(String),
-            title: TEST_FEEDBACK.title,
-            description: TEST_FEEDBACK.description,
-            category: TEST_FEEDBACK.category,
-            status: TEST_FEEDBACK.status,
-            authorId: author!.id
-          })
-        }
-      })
-    );
+      expect(res.status).toBe(201);
+      expect(res.body).toEqual(
+        expect.objectContaining({
+          status: "success",
+          data: {
+            feedback: expect.objectContaining({
+              id: expect.any(String),
+              title: TEST_FEEDBACK.title,
+              description: TEST_FEEDBACK.description,
+              category: TEST_FEEDBACK.category,
+              status: TEST_FEEDBACK.status,
+              authorId: author!.id
+            })
+          }
+        })
+      );
+    });
+
+    it("should return 401 when not authenticated", async () => {
+      const author = await getTestUser();
+      const input = {
+        title: TEST_FEEDBACK.title,
+        description: TEST_FEEDBACK.description,
+        category: TEST_FEEDBACK.category,
+        authorId: author!.id
+      };
+
+      const res = await request(app)
+        .post("/api/feedback/")
+        .set("Authorization", `Bearer invalid-token`)
+        .send(input);
+
+      expect(res.status).toBe(401);
+    });
+
+    it("should return 400 if input is invalid", async () => {
+      const input = {
+        title: TEST_FEEDBACK.title,
+        description: TEST_FEEDBACK.description,
+        category: TEST_FEEDBACK.category
+        // authorId: author.id    // missing field
+      };
+
+      const {token} = await loginTestUser();
+
+      const res = await request(app)
+        .post("/api/feedback/")
+        .set("Authorization", `Bearer ${token}`)
+        .send(input);
+
+      expect(res.status).toBe(400);
+    });
+
+    it("should return 400 if authorId is invalid", async () => {
+      const input = {
+        title: TEST_FEEDBACK.title,
+        description: TEST_FEEDBACK.description,
+        category: TEST_FEEDBACK.category,
+        authorId: "9b244495-a670-4ght-ac82-acfcb4804121"   // invalid authorId
+      };
+
+      const {token} = await loginTestUser();
+
+      const res = await request(app)
+        .post("/api/feedback/")
+        .set("Authorization", `Bearer ${token}`)
+        .send(input);
+
+      expect(res.status).toBe(400);
+    });
   });
 
-  it("GET /should list all feedbacks", async () => {
-    const {token} = await loginTestUser();
+  describe("GET /api/feedback", () => {
+    it("should return all feedbacks", async () => {
+      const {token} = await loginTestUser();
 
-    const res = await request(app)
-      .get("/api/feedback/")
-      .set("Authorization", `Bearer ${token}`);
+      const res = await request(app)
+        .get("/api/feedback/")
+        .set("Authorization", `Bearer ${token}`);
 
-    expect(res.status).toBe(200);
-    expect(res.body.data.feedbacks).toBeDefined();
+      expect(res.status).toBe(200);
+      expect(res.body.data.feedbacks).toBeDefined();
+    });
+
+    it("should return 401 if not authenticated", async () => {
+      const res = await request(app)
+        .get("/api/feedback/")
+        .set("Authorization", `Bearer invalid-token`);
+
+      expect(res.status).toBe(401);
+    });
   });
 
+  describe("GET /api/feedback/:feedbackId", () => {
+    it("GET /should get a feedback by ID", async () => {
+      const {token} = await loginTestUser();
 
-  it("GET /should get a feedback by ID", async () => {
-    const {token} = await loginTestUser();
+      const author = await getTestUserWithFeedbacks();
+      const feedbackId = author!.feedbacks[0].id;
 
-    const author = await getTestUserWithFeedbacks();
-    const feedbackId = author!.feedbacks[0].id;
+      const res = await request(app)
+        .get(`/api/feedback/${feedbackId}`)
+        .set("Authorization", `Bearer ${token}`);
 
-    const res = await request(app)
-      .get(`/api/feedback/${feedbackId}`)
-      .set("Authorization", `Bearer ${token}`);
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual(
+        expect.objectContaining({
+          status: "success",
+          data: {
+            feedback: expect.objectContaining({
+              id: expect.any(String),
+              title: TEST_FEEDBACK.title,
+              description: TEST_FEEDBACK.description,
+              category: TEST_FEEDBACK.category,
+              status: TEST_FEEDBACK.status,
+              authorId: author!.id
+            })
+          }
+        })
+      );
+    });
 
-    expect(res.status).toBe(200);
-    expect(res.body).toEqual(
-      expect.objectContaining({
-        status: "success",
-        data: {
-          feedback: expect.objectContaining({
-            id: expect.any(String),
-            title: TEST_FEEDBACK.title,
-            description: TEST_FEEDBACK.description,
-            category: TEST_FEEDBACK.category,
-            status: TEST_FEEDBACK.status,
-            authorId: author!.id
-          })
-        }
-      })
-    );
+    it("should return 401 when not authenticated", async () => {
+      const author = await getTestUserWithFeedbacks();
+      const feedbackId = author!.feedbacks[0].id;
+
+      const res = await request(app)
+        .get(`/api/feedback/${feedbackId}`)
+        .set("Authorization", `Bearer invalid-toke`);
+
+      expect(res.status).toBe(401);
+    });
+
+    it("should return 404 if feedback not found", async () => {
+      const {token} = await loginTestUser();
+
+      const res = await request(app)
+        .get(`/api/feedback/invalid-feedback-id`)
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(res.status).toBe(404);
+    });
   });
+
 
   it("POST /should upvote a feedback", async () => {
     const {token} = await loginTestUser();
@@ -208,7 +296,7 @@ describe("Feedback E2E", () => {
     expect(res.status).toBe(403);
     expect(res.body).toEqual(
       expect.objectContaining({
-        error: expect.any(String),
+        error: expect.any(String)
       })
     );
   });
