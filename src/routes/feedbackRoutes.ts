@@ -11,12 +11,14 @@ import {
   updateFeedbackByUserSchema,
   updateFeedbackStatusByAdminSchema
 } from "../validators/feedback.validator";
+import { PrismaUserRepository } from "../infrastructure/repositories/PrismaUserRepository";
 
 
 const router = Router();
+const userRepository = new PrismaUserRepository();
 const feedbackRepository = new PrismaFeedbackRepository();
 const feedbackVoteRepository = new PrismaFeedbackVoteRepository();
-const service = new FeedbackServiceImpl(feedbackRepository, feedbackVoteRepository);
+const service = new FeedbackServiceImpl(feedbackRepository, feedbackVoteRepository, userRepository);
 const controller = new FeedbackController(service);
 
 router.post("/", authenticate, validateRequestInput(createFeedbackSchema), controller.create.bind(controller));

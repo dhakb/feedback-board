@@ -8,7 +8,18 @@ import {
   UpdateFeedbackDTO
 } from "../../domain/repositories/IFeedbackRepository";
 import { FeedbackVote } from "../../domain/entities/FeedbackVote";
+import { IUserRepository } from "../../domain/repositories/IUserRepository";
+import { User } from "../../domain/entities/User";
 
+
+const mockUser = new User({
+  id: "user-1",
+  name: "Test User",
+  email: "test@example.com",
+  password: "hashed-password",
+  role: "USER",
+  createdAt: new Date()
+});
 
 const mockFeedback = new Feedback({
   id: "feedback-1",
@@ -22,6 +33,7 @@ const mockFeedback = new Feedback({
 });
 
 describe("FeedbackService", () => {
+  let userRepository: jest.Mocked<IUserRepository>;
   let feedbackRepository: jest.Mocked<IFeedbackRepository>;
   let feedbackVoteRepository: jest.Mocked<IFeedbackVoteRepository>;
 
@@ -43,13 +55,22 @@ describe("FeedbackService", () => {
       delete: jest.fn()
     };
 
-    feedbackService = new FeedbackServiceImpl(feedbackRepository, feedbackVoteRepository);
+    userRepository = {
+      create: jest.fn(),
+      delete: jest.fn(),
+      update: jest.fn(),
+      findById: jest.fn(),
+      findByEmail: jest.fn()
+    }
+
+    feedbackService = new FeedbackServiceImpl(feedbackRepository, feedbackVoteRepository, userRepository);
 
     jest.resetAllMocks();
   });
 
   describe("FeedbackService.create", () => {
     it("should create a Feedback, pass it to repository and return", async () => {
+      userRepository.findById.mockResolvedValue(mockUser)
       feedbackRepository.create.mockResolvedValue(mockFeedback);
 
       const input: CreateFeedbackDTO = {

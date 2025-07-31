@@ -6,13 +6,23 @@ import { BadRequestError, ForbiddenError, NotFoundError } from "../../errors/Api
 import { IFeedbackVoteRepository } from "../../domain/repositories/IFeedbackVoteRepository";
 import { UpdateFeedbackDTO, IFeedbackRepository, CreateFeedbackDTO } from "../../domain/repositories/IFeedbackRepository";
 import { FeedbackVote } from "../../domain/entities/FeedbackVote";
+import { IUserRepository } from "../../domain/repositories/IUserRepository";
 
 
 export class FeedbackServiceImpl implements IFeedbackService {
-  constructor(private readonly feedbackRepo: IFeedbackRepository, private readonly feedbackVoteRepo: IFeedbackVoteRepository) {
+  constructor(
+    private readonly feedbackRepo: IFeedbackRepository,
+    private readonly feedbackVoteRepo: IFeedbackVoteRepository,
+    private readonly userRepo: IUserRepository
+  ) {
   }
 
   async create(data: CreateFeedbackDTO): Promise<Feedback> {
+    const author = await this.userRepo.findById(data.authorId);
+    if(!author) {
+      throw new BadRequestError("No user found with the given author ID.")
+    }
+
     const feedback = new Feedback({
       id: generateUUID(),
       title: data.title,
