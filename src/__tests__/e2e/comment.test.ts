@@ -87,9 +87,12 @@ describe("Comment E2E", () => {
     it("should return 400 if input is invalid", async () => {
       const {token} = await loginTestUser();
 
+      const input = {}; // missing required fields
+
       const res = await request(app)
         .post("/api/comment/")
-        .set("Authorization", `Bearer ${token}`);
+        .set("Authorization", `Bearer ${token}`)
+        .send(input);
 
       expect(res.status).toBe(400);
       expect(res.body).toEqual(expect.objectContaining({status: "fail"})
@@ -142,6 +145,17 @@ describe("Comment E2E", () => {
           }
         })
       );
+    });
+
+    it("should return 401 if not authenticated", async () => {
+      const author = await getTestUserWithFeedbacks();
+      const feedbackId = author!.feedbacks[0].id;
+
+      const res = await request(app)
+        .get(`/api/comment/${feedbackId}`)
+        .set("Authorization", "Bearer invalid-token");
+
+      expect(res.status).toBe(401);
     });
 
     it("should return 404 if feedback does not exist", async () => {
