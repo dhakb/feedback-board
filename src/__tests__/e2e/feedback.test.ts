@@ -194,111 +194,118 @@ describe("Feedback E2E", () => {
   });
 
 
-  it("POST /should upvote a feedback", async () => {
-    const {token} = await loginTestUser();
+  describe("POST /api/feedback/:id/upvote", () => {
+    it("should upvote a feedback", async () => {
+      const {token} = await loginTestUser();
 
-    const author = await getTestUserWithFeedbacks();
-    const feedbackId = author!.feedbacks[0].id;
+      const author = await getTestUserWithFeedbacks();
+      const feedbackId = author!.feedbacks[0].id;
 
-    const res = await request(app)
-      .post(`/api/feedback/${feedbackId}/upvote`)
-      .set("Authorization", `Bearer ${token}`);
+      const res = await request(app)
+        .post(`/api/feedback/${feedbackId}/upvote`)
+        .set("Authorization", `Bearer ${token}`);
 
-    expect(res.status).toBe(204);
+      expect(res.status).toBe(204);
+    });
   });
 
-  it("PATCH /should let user update feedback on allowed fields", async () => {
-    const {token} = await loginTestUser();
+  describe("PATCH /api/feedback/:id", () => {
+    it("should let user update feedback on allowed fields", async () => {
+      const {token} = await loginTestUser();
 
-    const author = await getTestUserWithFeedbacks();
-    const feedbackId = author!.feedbacks[0].id;
+      const author = await getTestUserWithFeedbacks();
+      const feedbackId = author!.feedbacks[0].id;
 
-    const res = await request(app)
-      .patch(`/api/feedback/${feedbackId}`)
-      .set("Authorization", `Bearer ${token}`)
-      .send({title: "new title", description: "new desc", category: "new category"});
+      const res = await request(app)
+        .patch(`/api/feedback/${feedbackId}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({title: "new title", description: "new desc", category: "new category"});
 
-    expect(res.status).toBe(200);
-    expect(res.body).toEqual(
-      expect.objectContaining({
-        status: "success",
-        data: {
-          feedback: expect.objectContaining({
-            id: expect.any(String),
-            title: "new title",
-            description: "new desc",
-            category: "new category",
-            status: TEST_FEEDBACK.status,
-            authorId: author!.id
-          })
-        }
-      })
-    );
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual(
+        expect.objectContaining({
+          status: "success",
+          data: {
+            feedback: expect.objectContaining({
+              id: expect.any(String),
+              title: "new title",
+              description: "new desc",
+              category: "new category",
+              status: TEST_FEEDBACK.status,
+              authorId: author!.id
+            })
+          }
+        })
+      );
+    });
   });
 
-  it("DELETE /should delete a feedback", async () => {
-    const {token} = await loginTestUser();
+  describe("DELETE /api/feedback/id", () => {
+    it("should delete a feedback", async () => {
+      const {token} = await loginTestUser();
 
-    const author = await getTestUserWithFeedbacks();
-    const feedbackId = author!.feedbacks[0].id;
+      const author = await getTestUserWithFeedbacks();
+      const feedbackId = author!.feedbacks[0].id;
 
-    const res = await request(app)
-      .delete(`/api/feedback/${feedbackId}`)
-      .set("Authorization", `Bearer ${token}`);
+      const res = await request(app)
+        .delete(`/api/feedback/${feedbackId}`)
+        .set("Authorization", `Bearer ${token}`);
 
-    expect(res.status).toBe(204);
+      expect(res.status).toBe(204);
+    });
   });
 
-  it("PATCH /should let the admin update the feedback status", async () => {
-    const {token} = await loginTestAdmin();
+  describe("PATCH /api/feedback/:id/status", () => {
+    it("PATCH /should let the admin update the feedback status", async () => {
+      const {token} = await loginTestAdmin();
 
-    let author = await getTestUser();
-    await createFeedbackForTestUser(author!.id);
-    let author_with_feedbacks = await getTestUserWithFeedbacks();
-    const feedbackId = author_with_feedbacks!.feedbacks[0].id;
+      let author = await getTestUser();
+      await createFeedbackForTestUser(author!.id);
+      let author_with_feedbacks = await getTestUserWithFeedbacks();
+      const feedbackId = author_with_feedbacks!.feedbacks[0].id;
 
-    const res = await request(app)
-      .patch(`/api/feedback/${feedbackId}/status`)
-      .set("Authorization", `Bearer ${token}`)
-      .send({status: "IN_PROGRESS"});
+      const res = await request(app)
+        .patch(`/api/feedback/${feedbackId}/status`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({status: "IN_PROGRESS"});
 
-    expect(res.status).toBe(200);
-    expect(res.body).toEqual(
-      expect.objectContaining({
-        status: "success",
-        data: {
-          feedback: expect.objectContaining({
-            id: expect.any(String),
-            title: TEST_FEEDBACK.title,
-            description: TEST_FEEDBACK.description,
-            category: TEST_FEEDBACK.category,
-            status: "IN_PROGRESS",
-            authorId: author!.id
-          })
-        }
-      })
-    );
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual(
+        expect.objectContaining({
+          status: "success",
+          data: {
+            feedback: expect.objectContaining({
+              id: expect.any(String),
+              title: TEST_FEEDBACK.title,
+              description: TEST_FEEDBACK.description,
+              category: TEST_FEEDBACK.category,
+              status: "IN_PROGRESS",
+              authorId: author!.id
+            })
+          }
+        })
+      );
+    });
+
+    it("should throw ForbiddenError non-admin updating Feedback status", async () => {
+      const {token} = await loginTestUser();
+
+      let author = await getTestUser();
+      await createFeedbackForTestUser(author!.id);
+      let author_with_feedbacks = await getTestUserWithFeedbacks();
+      const feedbackId = author_with_feedbacks!.feedbacks[0].id;
+
+      const res = await request(app)
+        .patch(`/api/feedback/${feedbackId}/status`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({status: "IN_PROGRESS"});
+
+      expect(res.status).toBe(403);
+      expect(res.body).toEqual(
+        expect.objectContaining({
+          error: expect.any(String)
+        })
+      );
+    });
   });
-
-  it("should throw ForbiddenError non-admin updating Feedback status", async () => {
-    const {token} = await loginTestUser();
-
-    let author = await getTestUser();
-    await createFeedbackForTestUser(author!.id);
-    let author_with_feedbacks = await getTestUserWithFeedbacks();
-    const feedbackId = author_with_feedbacks!.feedbacks[0].id;
-
-    const res = await request(app)
-      .patch(`/api/feedback/${feedbackId}/status`)
-      .set("Authorization", `Bearer ${token}`)
-      .send({status: "IN_PROGRESS"});
-
-    expect(res.status).toBe(403);
-    expect(res.body).toEqual(
-      expect.objectContaining({
-        error: expect.any(String)
-      })
-    );
-  });
-
 });
