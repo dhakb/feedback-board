@@ -4,20 +4,11 @@ import { User } from "../../domain/entities/User";
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { AuthServiceImpl } from "../auth/AuthServiceImpl";
 import { IAuthService } from "../auth/IAuthService";
+import { mockUser } from "./mocks";
 
 
 jest.mock("bcrypt");
 jest.mock("jsonwebtoken");
-
-
-const mockUser = new User({
-  id: "user-1",
-  name: "Test User",
-  email: "test@example.com",
-  password: "hashed-password",
-  role: "USER",
-  createdAt: new Date()
-});
 
 
 describe("AuthService", () => {

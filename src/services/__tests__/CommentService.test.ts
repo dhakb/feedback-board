@@ -3,37 +3,7 @@ import { CreateCommentDTO, ICommentRepository } from "../../domain/repositories/
 import { CommentServiceImpl } from "../comment/CommentServiceImpl";
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { IFeedbackRepository } from "../../domain/repositories/IFeedbackRepository";
-import { Feedback } from "../../domain/entities/Feedback";
-import { User } from "../../domain/entities/User";
-
-
-const mockComment = new Comment({
-  id: "comment-1",
-  content: "This will be the banger if added!",
-  feedbackId: "feedback-1",
-  authorId: "user-1",
-  createdAt: new Date()
-});
-
-const mockFeedback = new Feedback({
-  id: "feedback-1",
-  title: "Dark mode",
-  description: "Add dark mode support",
-  category: "UI",
-  status: "OPEN",
-  upvotes: 0,
-  authorId: "user-1",
-  createdAt: new Date()
-});
-
-const mockUser: User = {
-  id: "user-1",
-  name: "Test User",
-  email: "user-test@test.com",
-  password: "hashed-password",
-  role: "USER",
-  createdAt: new Date()
-};
+import { mockFeedback, mockComment, mockUser } from "./mocks";
 
 
 describe("ICommentService", () => {

@@ -1,17 +1,8 @@
 import { IUserRepository, UpdateUserProfileDTO } from "../../domain/repositories/IUserRepository";
-import { User } from "../../domain/entities/User";
 import { UserServiceImpl } from "../user/UserServiceImpl";
 import { ForbiddenError, NotFoundError } from "../../errors/ApiError";
+import {mockUser} from "./mocks";
 
-
-const mockUser: User = {
-  id: "user-1",
-  name: "Test User",
-  email: "user-test@test.com",
-  password: "hashed-password",
-  role: "USER",
-  createdAt: new Date()
-};
 
 describe("UserService", () => {
   let userRepository: jest.Mocked<IUserRepository>;
