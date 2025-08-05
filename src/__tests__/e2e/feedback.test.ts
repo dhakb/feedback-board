@@ -11,6 +11,7 @@ import {
 import { PrismaClient } from "../../../generated/prisma";
 import { TEST_USER, TEST_FEEDBACK } from "../utils/mocks";
 import { loginTestUser } from "../utils/db";
+import { generateUUID } from "../../utils/uuid";
 
 
 const app = createApp();
@@ -143,7 +144,7 @@ describe("Feedback E2E", () => {
   });
 
   describe("GET /api/feedback/:feedbackId", () => {
-    it("GET /should get a feedback by ID", async () => {
+    it("should get a feedback by ID", async () => {
       const {token} = await loginTestUser();
 
       const author = await getTestUserWithFeedbacks();
@@ -206,6 +207,35 @@ describe("Feedback E2E", () => {
         .set("Authorization", `Bearer ${token}`);
 
       expect(res.status).toBe(204);
+    });
+
+    it("should return 400 if feedback is non-existent", async () => {
+      const {token} = await loginTestUser();
+
+      const feedbackId = generateUUID(); // random, non-existent feedback ID
+
+      const res = await request(app)
+        .post(`/api/feedback/${feedbackId}/upvote`)
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(res.status).toBe(400);
+    });
+
+    it("should return 403 if user already upvoted the feedback", async () => {
+      const {token} = await loginTestUser();
+
+      const author = await getTestUserWithFeedbacks();
+      const feedbackId = author!.feedbacks[0].id;
+
+      await request(app)
+        .post(`/api/feedback/${feedbackId}/upvote`)
+        .set("Authorization", `Bearer ${token}`);
+
+      const res = await request(app)
+        .post(`/api/feedback/${feedbackId}/upvote`)
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(res.status).toBe(403);
     });
   });
 
