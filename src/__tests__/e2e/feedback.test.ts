@@ -3,7 +3,7 @@ import { createApp } from "../../app";
 import {
   clearDB, createAltTestUser, createFeedbackForTestAltUser, createFeedbackForTestUser,
   createTestAdmin,
-  createTestUser,
+  createTestUser, getAltTestUser,
   getTestUser,
   getTestUserWithFeedbacks,
   loginTestAdmin
@@ -23,6 +23,8 @@ beforeAll(async () => {
 
   await createTestUser();
   await createTestAdmin();
+
+  await createAltTestUser();
 });
 
 afterAll(async () => {
@@ -246,10 +248,16 @@ describe("Feedback E2E", () => {
       const author = await getTestUserWithFeedbacks();
       const feedbackId = author!.feedbacks[0].id;
 
+      const input = {
+        title: "new title",
+        description: "new desc",
+        category: "new category"
+      };
+
       const res = await request(app)
         .patch(`/api/feedback/${feedbackId}`)
         .set("Authorization", `Bearer ${token}`)
-        .send({title: "new title", description: "new desc", category: "new category"});
+        .send(input);
 
       expect(res.status).toBe(200);
       expect(res.body).toEqual(
@@ -287,6 +295,27 @@ describe("Feedback E2E", () => {
 
       expect(res.status).toBe(400);
     });
+
+    it("should return 403 is user is not the author", async () => {
+      const {token} = await loginTestUser();
+
+      const altUser = await getAltTestUser();
+      const altFeedback = await createFeedbackForTestAltUser(altUser!.id);
+      const feedbackId = altFeedback.id;
+
+      const input = {
+        title: "new title",
+        description: "new desc",
+        category: "new category"
+      };
+
+      const res = await request(app)
+        .patch(`/api/feedback/${feedbackId}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send(input);
+
+      expect(res.status).toBe(403);
+    });
   });
 
   describe("DELETE /api/feedback/id", () => {
@@ -316,8 +345,8 @@ describe("Feedback E2E", () => {
     });
 
     it("should return 403 user is not author of the feedback", async () => {
-      const altUser = await createAltTestUser();
-      const altFeedback = await createFeedbackForTestAltUser(altUser.id);
+      const altUser = await getAltTestUser();
+      const altFeedback = await createFeedbackForTestAltUser(altUser!.id);
 
       const {token} = await loginTestUser();
 

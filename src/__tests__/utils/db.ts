@@ -48,6 +48,12 @@ export async function getTestUser() {
   });
 }
 
+export async function getAltTestUser() {
+  return prisma.user.findUnique({
+    where: {email: TEST_USER_ALT.email}
+  });
+}
+
 export async function getTestUserWithFeedbacks() {
   return prisma.user.findUnique({
     where: {email: TEST_USER.email},
