@@ -4,6 +4,12 @@ export const TEST_USER = {
   password: "unsafepassword"
 };
 
+export const TEST_USER_ALT = {
+  name: "E2E Test User ALT",
+  email: "e2e@test-alt.com",
+  password: "unsafepassword"
+};
+
 export const TEST_FEEDBACK = {
   title: "Dark mode",
   description: "Add dark mode support",

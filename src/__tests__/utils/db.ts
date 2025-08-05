@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import request from "supertest";
 import { createApp } from "../../app";
-import { TEST_USER, TEST_FEEDBACK, TEST_ADMIN } from "./mocks";
+import { TEST_USER, TEST_FEEDBACK, TEST_ADMIN, TEST_USER_ALT } from "./mocks";
 import { PrismaClient } from "../../../generated/prisma";
 
 
@@ -30,6 +30,18 @@ export async function createTestUser() {
   });
 }
 
+export async function createAltTestUser() {
+  const hashedPassword = await bcrypt.hash(TEST_USER_ALT.password, 10);
+
+  return prisma.user.create({
+    data: {
+      email: TEST_USER_ALT.email,
+      password: hashedPassword,
+      name: TEST_USER_ALT.name
+    }
+  });
+}
+
 export async function getTestUser() {
   return prisma.user.findUnique({
     where: {email: TEST_USER.email}
@@ -52,6 +64,17 @@ export async function loginTestUser(): Promise<{ token: string }> {
 }
 
 export async function createFeedbackForTestUser(userId: string) {
+  return prisma.feedback.create({
+    data: {
+      title: TEST_FEEDBACK.title,
+      description: TEST_FEEDBACK.description,
+      category: TEST_FEEDBACK.category,
+      authorId: userId
+    }
+  });
+}
+
+export async function createFeedbackForTestAltUser(userId: string) {
   return prisma.feedback.create({
     data: {
       title: TEST_FEEDBACK.title,

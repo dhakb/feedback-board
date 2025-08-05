@@ -302,6 +302,19 @@ describe("Feedback E2E", () => {
 
       expect(res.status).toBe(204);
     });
+
+    it("should return 404 if feedback not found", async () => {
+      const {token} = await loginTestUser();
+
+      const feedbackId = generateUUID();
+
+      const res = await request(app)
+        .delete(`/api/feedback/${feedbackId}`)
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(res.status).toBe(404);
+    });
+    })
   });
 
   describe("PATCH /api/feedback/:id/status", () => {
