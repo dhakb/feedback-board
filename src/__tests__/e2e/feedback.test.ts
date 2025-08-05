@@ -268,6 +268,25 @@ describe("Feedback E2E", () => {
         })
       );
     });
+
+    it("should return 400 if user tries to update not allowed fields", async () => {
+      const {token} = await loginTestUser();
+
+      const author = await getTestUserWithFeedbacks();
+      const feedbackId = author!.feedbacks[0].id;
+
+      const input = {
+        title: "new title",
+        status: "DONE"       // not allowed field
+      };
+
+      const res = await request(app)
+        .patch(`/api/feedback/${feedbackId}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send(input);
+
+      expect(res.status).toBe(400);
+    });
   });
 
   describe("DELETE /api/feedback/id", () => {
