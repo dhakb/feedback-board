@@ -1,7 +1,7 @@
 import request from "supertest";
 import { createApp } from "../../app";
 import {
-  clearDB, createFeedbackForTestUser,
+  clearDB, createAltTestUser, createFeedbackForTestAltUser, createFeedbackForTestUser,
   createTestAdmin,
   createTestUser,
   getTestUser,
@@ -303,10 +303,10 @@ describe("Feedback E2E", () => {
       expect(res.status).toBe(204);
     });
 
-    it("should return 404 if feedback not found", async () => {
+    it("should return 404 if feedback is not found", async () => {
       const {token} = await loginTestUser();
 
-      const feedbackId = generateUUID();
+      const feedbackId = generateUUID()
 
       const res = await request(app)
         .delete(`/api/feedback/${feedbackId}`)
@@ -314,7 +314,21 @@ describe("Feedback E2E", () => {
 
       expect(res.status).toBe(404);
     });
-    })
+
+    it("should return 403 user is not author of the feedback", async () => {
+      const altUser = await createAltTestUser();
+      const altFeedback = await createFeedbackForTestAltUser(altUser.id);
+
+      const {token} = await loginTestUser();
+
+      const feedbackId = altFeedback.id;
+
+      const res = await request(app)
+        .delete(`/api/feedback/${feedbackId}`)
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(res.status).toBe(403);
+    });
   });
 
   describe("PATCH /api/feedback/:id/status", () => {
