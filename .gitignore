@@ -1,13 +1,30 @@
 node_modules
-# Keep environment variables out of version control
-.env
 
+# Environment files
+.env
+.env.*
+!.env.example
+!.env.master.example
+!.env.development.example
+!.env.test.example
+!.env.production.example
+
+# Secrets directory
+secrets/
+
+# Generated files
 /generated/prisma
 
+# IDE files
 .idea
 .vscode
 
+# Build output
 /dist
 /src/coverage
 
+# Notes
 notes.txt
+
+README.md
+DOCKER_ENV_SETUP.md

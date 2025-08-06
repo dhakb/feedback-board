@@ -3,14 +3,27 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "dev": "NODE_ENV=development ts-node-dev --respawn --transpile-only src/server.ts",
+    "dev:test": "NODE_ENV=test ts-node-dev --respawn --transpile-only src/server.ts",
+    "dev:prod": "NODE_ENV=production ts-node-dev --respawn --transpile-only src/server.ts",
     "clean": "rimraf dist",
     "build": "npm run clean && tsc",
-    "start": "node dist/server.js",
-    "test": "jest --runInBand",
-    "test:e2e": "jest --runInBand",
+    "start": "NODE_ENV=production node dist/server.js",
+    "start:dev": "NODE_ENV=development node dist/server.js",
+    "start:test": "NODE_ENV=test node dist/server.js",
+    "test": "NODE_ENV=test jest --runInBand",
+    "test:watch": "NODE_ENV=test jest --runInBand --watch",
     "clear-test": "jest --clearCache",
-    "prepare": "husky"
+    "prepare": "husky",
+    "db:migrate": "prisma migrate deploy",
+    "db:migrate:dev": "NODE_ENV=development prisma migrate deploy",
+    "db:migrate:test": "NODE_ENV=test prisma migrate deploy",
+    "db:migrate:prod": "NODE_ENV=production prisma migrate deploy",
+    "db:generate": "prisma generate",
+    "db:seed": "NODE_ENV=development ts-node-dev prisma/seed.ts",
+    "db:seed:test": "NODE_ENV=test ts-node-dev prisma/seed.ts",
+    "db:reset": "NODE_ENV=development prisma migrate reset --force",
+    "db:reset:test": "NODE_ENV=test prisma migrate reset --force --skip-seed"
   },
   "prisma": {
     "seed": "ts-node-dev prisma/seed.ts"

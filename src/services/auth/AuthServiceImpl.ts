@@ -1,13 +1,12 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { config } from "../../config";
 import { generateUUID } from "../../utils/uuid";
 import { Role, User } from "../../domain/entities/User";
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { IAuthService, LoginResult } from "./IAuthService";
 import { ConflictError, UnauthorizedError } from "../../errors/ApiError";
 
-
-const JWT_SECRET = process.env.JWT_SECRET || "dev-jwt-secret";
 
 
 export class AuthServiceImpl implements IAuthService {
@@ -46,7 +45,7 @@ export class AuthServiceImpl implements IAuthService {
       throw new UnauthorizedError("Invalid credentials");
     }
 
-    const token = jwt.sign({userId: user.id, role: user.role}, JWT_SECRET, {expiresIn: "7d"});
+    const token = jwt.sign({userId: user.id, role: user.role}, config.jwt.secret, {expiresIn: "7d"});
 
     const {password: _, ...safeUser} = user;
     return {
@@ -56,6 +55,6 @@ export class AuthServiceImpl implements IAuthService {
   }
 
   verifyToken(token: string): { userId: string; role: Role } {
-    return jwt.verify(token, JWT_SECRET) as { userId: string; role: Role };
+    return jwt.verify(token, config.jwt.secret) as { userId: string; role: Role };
   }
 }

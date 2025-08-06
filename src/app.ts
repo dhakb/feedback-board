@@ -1,17 +1,13 @@
 import cors from "cors";
-import dotenv from "dotenv";
 import express from "express";
 
-
-dotenv.config();
-
+import { config } from "./config";
 import apiRouter from "./routes";
 import { errorHandler } from "./middleware/errorHandler.middleware";
 import { globalLimiter } from "./middleware/rateLimiter.middleware";
 import { unknownRoutesHandler } from "./middleware/unknownRoutesHandler.middleware";
 import { trimRequest } from "./middleware/trimRequest.middleware";
 import { setupSwagger } from "./swagger";
-
 
 const createApp = () => {
   const app = express();
@@ -20,7 +16,11 @@ const createApp = () => {
 
   app.set('trust proxy', 1);
 
-  app.use(cors());
+  app.use(cors({
+    origin: config.cors.origin,
+    credentials: config.cors.credentials,
+  }));
+  
   app.use(express.json());
 
   app.get("/health", (_, res) => {
@@ -29,7 +29,9 @@ const createApp = () => {
 
   app.use(trimRequest);
 
-  setupSwagger(app);
+  if (config.swagger.enabled) {
+    setupSwagger(app);
+  }
 
   app.use("/api", globalLimiter, apiRouter);
 
@@ -39,6 +41,5 @@ const createApp = () => {
 
   return app;
 };
-
 
 export { createApp };
