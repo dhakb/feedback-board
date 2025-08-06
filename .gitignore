@@ -5,6 +5,7 @@ node_modules
 /generated/prisma
 
 .idea
+.vscode
 
 /dist
 /src/coverage

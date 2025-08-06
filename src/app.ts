@@ -10,6 +10,7 @@ import { errorHandler } from "./middleware/errorHandler.middleware";
 import { globalLimiter } from "./middleware/rateLimiter.middleware";
 import { unknownRoutesHandler } from "./middleware/unknownRoutesHandler.middleware";
 import { trimRequest } from "./middleware/trimRequest.middleware";
+import { setupSwagger } from "./swagger";
 
 
 const createApp = () => {
@@ -27,6 +28,8 @@ const createApp = () => {
   });
 
   app.use(trimRequest);
+
+  setupSwagger(app);
 
   app.use("/api", globalLimiter, apiRouter);
 

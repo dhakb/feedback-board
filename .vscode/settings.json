@@ -1,0 +1,14 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "feeback-board-db",
+            "database": "feedback-board",
+            "password": "feedback-board-superunsafepassword",
+            "username": "feedback-board-admin"
+        }
+    ]
+}
