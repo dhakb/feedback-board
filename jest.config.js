@@ -4,8 +4,10 @@ module.exports = {
     testEnvironment: 'node',
     rootDir: 'src',
     moduleFileExtensions: ['ts', 'js'],
-    testMatch: ['**/__tests__/**/*.test.ts'],
     transform: {
         '^.+\\.ts$': 'ts-jest',
     },
+    // Only run files that end with .test.ts
+    testMatch: ['**/*.test.ts'],
+    // Base configuration - will be extended by specific configs
 };
