@@ -1,7 +1,24 @@
+import z from 'zod';
 import dotenv from 'dotenv';
 
-const env = process.env.NODE_ENV || 'development';
-dotenv.config({ path: `.env.${env}` });
+const NODE_ENV = process.env.NODE_ENV || 'development';
+dotenv.config({ path: `.env.${NODE_ENV}` });
+
+const EnvSchema = z.object({
+  NODE_ENV: z.enum(['development', 'test', 'production']),
+  PORT: z.string().regex(/^\d+$/).transform(Number),
+  DATABASE_URL: z.string().url(),
+  JWT_SECRET: z.string().min(10),
+  JWT_EXPIRES_IN: z.string().min(1),
+  CORS_ORIGIN: z.string().url(),
+  LOG_LEVEL: z.enum(['debug', 'info', 'error']).default('info'),
+  SWAGGER_ENABLED: z
+    .string()
+    .optional()
+    .transform((val) => val === 'true'),
+});
+
+const env = EnvSchema.parse(process.env);
 
 export interface Config {
   env: string;
@@ -31,16 +48,16 @@ export interface Config {
 
 const development: Config = {
   env: 'development',
-  port: parseInt(process.env.PORT || '8080', 10),
+  port: env.PORT,
   database: {
-    url: process.env.DATABASE_URL || 'postgresql://feedback-board-admin:feedback-board-superunsafepassword@localhost:5432/feedback-board-dev',
+    url: env.DATABASE_URL
   },
   jwt: {
-    secret: process.env.JWT_SECRET || 'dev-secret-key-change-in-production',
-    expiresIn: process.env.JWT_EXPIRES_IN || '24h',
+    secret: env.JWT_SECRET,
+    expiresIn: env.JWT_EXPIRES_IN,
   },
   cors: {
-    origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+    origin: env.CORS_ORIGIN,
     credentials: true,
   },
   rateLimit: {
@@ -57,16 +74,16 @@ const development: Config = {
 
 const test: Config = {
   env: 'test',
-  port: parseInt(process.env.PORT || '8081', 10),
+  port: env.PORT,
   database: {
-    url: process.env.DATABASE_URL || 'postgresql://feedback-board-admin:feedback-board-superunsafepassword@localhost:5432/feedback-board-test',
+    url: env.DATABASE_URL,
   },
   jwt: {
-    secret: process.env.JWT_SECRET || 'test-secret-key',
-    expiresIn: process.env.JWT_EXPIRES_IN || '1h',
+    secret: env.JWT_SECRET,
+    expiresIn: env.JWT_EXPIRES_IN,
   },
   cors: {
-    origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+    origin: env.CORS_ORIGIN,
     credentials: true,
   },
   rateLimit: {
@@ -83,16 +100,16 @@ const test: Config = {
 
 const production: Config = {
   env: 'production',
-  port: parseInt(process.env.PORT || '8080', 10),
+  port: env.PORT,
   database: {
-    url: process.env.DATABASE_URL || 'postgresql://feedback-board-admin:feedback-board-superunsafepassword@localhost:5432/feedback-board',
+    url: env.DATABASE_URL
   },
   jwt: {
-    secret: process.env.JWT_SECRET || 'production-secret-key-must-be-set',
-    expiresIn: process.env.JWT_EXPIRES_IN || '24h',
+    secret: env.JWT_SECRET,
+    expiresIn: env.JWT_EXPIRES_IN,
   },
   cors: {
-    origin: process.env.CORS_ORIGIN || 'https://yourdomain.com',
+    origin: env.CORS_ORIGIN,
     credentials: true,
   },
   rateLimit: {
@@ -100,7 +117,7 @@ const production: Config = {
     max: 50,                       // Stricter limit for production
   },
   swagger: {
-    enabled: process.env.SWAGGER_ENABLED === 'true', // Disabled by default in production
+    enabled: env.SWAGGER_ENABLED, // Disabled by default in production
   },
   logging: {
     level: 'info',
@@ -113,6 +130,6 @@ const configs: Record<string, Config> = {
   production,
 };
 
-export const config: Config = configs[env] || development;
+export const config: Config = configs[NODE_ENV] || development;
 
 export default config; 
