@@ -9,6 +9,16 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      NODE_ENV: test
+      PORT: 8081
+      DATABASE_URL: postgres://testuser:testpassword@localhost:5432/testdb
+      JWT_SECRET: testsecret
+      JWT_EXPIRES_IN: 1h
+      CORS_ORIGIN: http://localhost:3000
+      LOG_LEVEL: error
+      SWAGGER_ENABLED: false
+
 
     steps:
       - name: Checkout code
