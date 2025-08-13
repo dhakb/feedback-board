@@ -32,7 +32,8 @@ describe("FeedbackService", () => {
     feedbackVoteRepository = {
       find: jest.fn(),
       create: jest.fn(),
-      delete: jest.fn()
+      delete: jest.fn(),
+      deleteAll: jest.fn()
     };
 
     userRepository = {
@@ -149,6 +150,7 @@ describe("FeedbackService", () => {
       await feedbackService.delete("feedback-1", "user-1", "USER");
 
       expect(feedbackRepository.delete).toHaveBeenCalledWith("feedback-1");
+      expect(feedbackVoteRepository.deleteAll).toHaveBeenCalledWith("feedback-1");
     });
 
     it("should allow the admin to delete any feedback", async () => {

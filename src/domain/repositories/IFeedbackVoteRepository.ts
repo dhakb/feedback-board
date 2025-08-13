@@ -7,4 +7,6 @@ export interface IFeedbackVoteRepository {
   create(data: FeedbackVote): Promise<FeedbackVote>;
 
   delete(userId: string, feedbackId: string): Promise<void>
+
+  deleteAll(feedbackId: string): Promise<void>;
 }

@@ -78,7 +78,7 @@ export class FeedbackServiceImpl implements IFeedbackService {
       throw new ForbiddenError("Not allowed to delete this feedback");
     }
 
-    await this.feedbackVoteRepo.delete(userId, feedbackId)
+    await this.feedbackVoteRepo.deleteAll(feedbackId);
     return await this.feedbackRepo.delete(feedbackId);
   }
 

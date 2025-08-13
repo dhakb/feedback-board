@@ -18,4 +18,8 @@ export class PrismaFeedbackVoteRepository implements IFeedbackVoteRepository {
   async delete(userId: string, feedbackId: string): Promise<void> {
     await prisma.feedbackVote.delete({where: {userId_feedbackId: {userId, feedbackId}}});
   }
+
+  async deleteAll(feedbackId: string): Promise<void> {
+    await prisma.feedbackVote.deleteMany({where: {feedbackId}});
+  }
 }
