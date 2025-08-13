@@ -1,8 +1,7 @@
 import jwt from "jsonwebtoken";
 import type { NextFunction, Request, Response } from "express";
+import config from "../config";
 
-
-const JWT_SECRET = process.env.JWT_SECRET || "dev-jwt-secret";
 
 export interface AuthRequest extends Request {
   user?: { userId: string, role: string };
@@ -24,7 +23,7 @@ export function authenticate(req: AuthRequest, res: Response, next: NextFunction
   }
 
   try {
-    req.user = jwt.verify(token, JWT_SECRET) as { userId: string; role: string };
+    req.user = jwt.verify(token, config.jwt.secret) as { userId: string; role: string };
     next();
   } catch (err) {
     res.status(401).json({error: "Unauthorized", message: "Invalid token"});
