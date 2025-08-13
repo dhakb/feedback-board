@@ -1,9 +1,7 @@
-import { PrismaClient } from "../../../generated/prisma";
+import { prisma } from "../prisma";
 import { Feedback } from "../../domain/entities/Feedback";
-import { IFeedbackRepository, UpdateFeedbackDTO } from "../../domain/repositories/IFeedbackRepository";
+import { IFeedbackRepository } from "../../domain/repositories/IFeedbackRepository";
 
-
-const prisma = new PrismaClient();
 
 export class PrismaFeedbackRepository implements IFeedbackRepository {
   async create(data: Feedback): Promise<Feedback> {

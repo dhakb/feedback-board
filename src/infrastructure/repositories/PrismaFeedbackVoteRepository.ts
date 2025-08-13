@@ -1,9 +1,7 @@
-import { PrismaClient } from "../../../generated/prisma";
+import { prisma } from "../prisma";
 import { FeedbackVote } from "../../domain/entities/FeedbackVote";
 import { IFeedbackVoteRepository } from "../../domain/repositories/IFeedbackVoteRepository";
 
-
-const prisma = new PrismaClient();
 
 
 export class PrismaFeedbackVoteRepository implements IFeedbackVoteRepository {

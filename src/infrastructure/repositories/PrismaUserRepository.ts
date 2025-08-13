@@ -1,9 +1,7 @@
+import { prisma } from "../prisma";
 import { User } from "../../domain/entities/User";
-import { PrismaClient } from "../../../generated/prisma";
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
 
-
-const prisma = new PrismaClient();
 
 export class PrismaUserRepository implements IUserRepository {
   async create(data: User): Promise<User> {

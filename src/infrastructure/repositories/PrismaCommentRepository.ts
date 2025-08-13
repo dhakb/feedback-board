@@ -1,9 +1,7 @@
+import { prisma } from "../prisma";
 import { Comment } from "../../domain/entities/Comment";
-import { PrismaClient } from "../../../generated/prisma";
 import { ICommentRepository } from "../../domain/repositories/ICommentRepository";
 
-
-const prisma = new PrismaClient();
 
 
 export class PrismaCommentRepository implements ICommentRepository {
