@@ -1,25 +1,17 @@
 import { Router } from "express";
 import { authenticate } from "../middleware/authenticate.middleware";
 import { authorizeAdmin } from "../middleware/authorizeAdmin.middleware";
-import { FeedbackController } from "../controllers/FeedbackController";
-import { FeedbackServiceImpl } from "../services/feeback/FeedbackServiceImpl";
-import { PrismaFeedbackRepository } from "../infrastructure/repositories/PrismaFeedbackRepository";
-import { PrismaFeedbackVoteRepository } from "../infrastructure/repositories/PrismaFeedbackVoteRepository";
+import { feedbackController } from "../container";
 import { validateRequestInput } from "../middleware/validateRequestInput.middleware";
 import {
   createFeedbackSchema,
   updateFeedbackByUserSchema,
   updateFeedbackStatusByAdminSchema
 } from "../validators/feedback.validator";
-import { PrismaUserRepository } from "../infrastructure/repositories/PrismaUserRepository";
 
 
 const router = Router();
-const userRepository = new PrismaUserRepository();
-const feedbackRepository = new PrismaFeedbackRepository();
-const feedbackVoteRepository = new PrismaFeedbackVoteRepository();
-const service = new FeedbackServiceImpl(feedbackRepository, feedbackVoteRepository, userRepository);
-const controller = new FeedbackController(service);
+const controller = feedbackController;
 
 router.post("/", authenticate, validateRequestInput(createFeedbackSchema), controller.create.bind(controller));
 router.get("/", authenticate, controller.list.bind(controller));
