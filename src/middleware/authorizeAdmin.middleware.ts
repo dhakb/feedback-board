@@ -1,8 +1,7 @@
-import { Response, NextFunction } from "express";
-import type { AuthRequest } from "./authenticate.middleware";
+import type { Request, Response, NextFunction } from "express";
 
 
-export function authorizeAdmin(req: AuthRequest, res: Response, next: NextFunction) {
+export function authorizeAdmin(req: Request, res: Response, next: NextFunction) {
   if (!req.user) {
     res.status(401).json({error: "Unauthorized"});
     return;

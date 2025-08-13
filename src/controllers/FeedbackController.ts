@@ -1,6 +1,5 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { IFeedbackService } from "../services/feeback/IFeedbackService";
-import { AuthRequest } from "../middleware/authenticate.middleware";
 import type { Role } from "../domain/entities/User";
 
 
@@ -42,7 +41,7 @@ export class FeedbackController {
     });
   }
 
-  async upvote(req: AuthRequest, res: Response) {
+  async upvote(req: Request, res: Response) {
     await this.service.upvote(req.user!.userId, req.params.id);
 
     res.status(204).send({
@@ -51,7 +50,7 @@ export class FeedbackController {
     });
   }
 
-  async delete(req: AuthRequest, res: Response) {
+  async delete(req: Request, res: Response) {
     const feedbackId = req.params.id;
     const userId = req.user?.userId || "";
     const role = req.user?.role as Role || "";
@@ -64,7 +63,7 @@ export class FeedbackController {
     });
   }
 
-  async updateFeedbackByUser(req: AuthRequest, res: Response) {
+  async updateFeedbackByUser(req: Request, res: Response) {
     const data = req.body;
     const feedbackId = req.params.id;
     const userId = req.user!.userId;
@@ -79,7 +78,7 @@ export class FeedbackController {
     });
   }
 
-  async updateFeedbackStatusByAdmin(req: AuthRequest, res: Response) {
+  async updateFeedbackStatusByAdmin(req: Request, res: Response) {
     const {id: feedbackId} = req.params;
     const {status} = req.body;
 

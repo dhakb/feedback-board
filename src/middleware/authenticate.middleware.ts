@@ -3,12 +3,8 @@ import type { NextFunction, Request, Response } from "express";
 import config from "../config";
 
 
-export interface AuthRequest extends Request {
-  user?: { userId: string, role: string };
-}
 
-
-export function authenticate(req: AuthRequest, res: Response, next: NextFunction) {
+export function authenticate(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
@@ -23,7 +19,7 @@ export function authenticate(req: AuthRequest, res: Response, next: NextFunction
   }
 
   try {
-    req.user = jwt.verify(token, config.jwt.secret) as { userId: string; role: string };
+    req.user = jwt.verify(token, config.jwt.secret) as Express.UserPayload;
     next();
   } catch (err) {
     res.status(401).json({error: "Unauthorized", message: "Invalid token"});
