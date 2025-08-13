@@ -187,9 +187,10 @@ describe("Feedback E2E", () => {
 
     it("should return 404 if feedback not found", async () => {
       const {token} = await loginTestUser();
+      const nonExistentId = generateUUID();
 
       const res = await request(app)
-        .get(`/api/feedback/invalid-feedback-id`)
+        .get(`/api/feedback/${nonExistentId}`)
         .set("Authorization", `Bearer ${token}`);
 
       expect(res.status).toBe(404);

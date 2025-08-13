@@ -18,3 +18,6 @@ export const updateFeedbackStatusByAdminSchema = z.object({
   status: z.enum(["OPEN", "PLANNED", "IN_PROGRESS", "COMPLETED"])
 }).strict();
 
+export const feedbackIdParamsSchema = z.object({
+  id: z.string().uuid()
+}).strict();

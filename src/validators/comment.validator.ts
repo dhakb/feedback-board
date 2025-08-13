@@ -6,3 +6,7 @@ export const createCommentSchema = z.object({
   feedbackId: z.string().uuid(),
   authorId: z.string().uuid()
 }).strict();
+
+export const feedbackIdParamsSchema = z.object({
+  feedbackId: z.string().uuid()
+}).strict();
