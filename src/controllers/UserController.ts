@@ -8,9 +8,9 @@ export class UserController {
   }
 
   async updateProfile(req: Request, res: Response) {
-    const {email, ...data} = req.body;
+    const data = req.body;
 
-    const user = await this.service.updateUserProfile(req.user!.userId, email, data);
+    const user = await this.service.updateUserProfile(req.user!.userId, data);
 
     res.status(200).json({
       status: "success",

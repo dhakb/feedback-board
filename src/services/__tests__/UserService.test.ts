@@ -23,7 +23,7 @@ describe("UserService", () => {
   });
 
   it("should update permitted user fields and return updated user", async () => {
-    userRepository.findByEmail.mockResolvedValue(mockUser);
+    userRepository.findById.mockResolvedValue(mockUser);
 
     const input: UpdateUserProfileDTO = {
       name: "Updated Name"
@@ -31,23 +31,16 @@ describe("UserService", () => {
 
     userRepository.update.mockResolvedValue({...mockUser, ...input});
 
-    const updatedUser = await userService.updateUserProfile("user-1", "user-test@test.com", input);
+    const updatedUser = await userService.updateUserProfile("user-1", input);
 
     expect(userRepository.update).toHaveBeenCalled();
     expect(updatedUser.name).toBe(input.name);
   });
 
   it("should throw NotFoundError if user doesn't exist", async () => {
-    await expect(userService.updateUserProfile("user-2", "user-test@test.com", {name: "Updated name"})).rejects.toThrow(NotFoundError);
+    await expect(userService.updateUserProfile("user-2", {name: "Updated name"})).rejects.toThrow(NotFoundError);
 
     expect(userRepository.update).not.toHaveBeenCalled();
   });
-
-  it("should throw ForbiddenError if user tries to update other user's profile", async () => {
-    userRepository.findByEmail.mockResolvedValue(mockUser);
-
-    await expect(userService.updateUserProfile("wrong-1", "user-test@test.com", {name: "Updated name"})).rejects.toThrow(ForbiddenError);
-
-    expect(userRepository.update).not.toHaveBeenCalled();
-  });
+  
 });

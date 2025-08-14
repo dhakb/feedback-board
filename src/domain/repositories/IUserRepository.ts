@@ -19,7 +19,7 @@ export interface IUserRepository {
 
   findById(id: string): Promise<User | null>;
 
-  update(email: string, data: Partial<User>): Promise<User>;
+  update(id: string, data: Partial<User>): Promise<User>;
 
   delete(email: string): Promise<User>;
 }

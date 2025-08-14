@@ -13,6 +13,5 @@ export const loginUserSchema = z.object({
 }).strict();
 
 export const updateUserProfileSchema = z.object({
-  email: z.string().email(),
   name: z.string().min(4)
 }).strict();
