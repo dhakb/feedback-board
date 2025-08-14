@@ -1,27 +1,26 @@
 import jwt from "jsonwebtoken";
 import type { NextFunction, Request, Response } from "express";
 import config from "../config";
+import { UnauthorizedError } from "../errors/ApiError";
 
 
 
-export function authenticate(req: Request, res: Response, next: NextFunction) {
+export function authenticate(req: Request, _res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
-    res.status(401).json({error: "Unauthorized", message: "Authorization header missing"});
-    return;
+    throw new UnauthorizedError("Authorization header missing");
   }
 
   const token = authHeader.split(" ")[1];
   if (!token) {
-    res.status(401).json({error: "Unauthorized", message: "Invalid token"});
-    return;
+    throw new UnauthorizedError("Invalid token");
   }
 
   try {
     req.user = jwt.verify(token, config.jwt.secret) as Express.UserPayload;
     next();
   } catch (err) {
-    res.status(401).json({error: "Unauthorized", message: "Invalid token"});
+    throw new UnauthorizedError("Invalid token");
   }
 }

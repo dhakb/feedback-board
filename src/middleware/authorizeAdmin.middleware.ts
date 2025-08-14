@@ -1,15 +1,14 @@
 import type { Request, Response, NextFunction } from "express";
+import { ForbiddenError, UnauthorizedError } from "../errors/ApiError";
 
 
-export function authorizeAdmin(req: Request, res: Response, next: NextFunction) {
+export function authorizeAdmin(req: Request, _res: Response, next: NextFunction) {
   if (!req.user) {
-    res.status(401).json({error: "Unauthorized"});
-    return;
+    throw new UnauthorizedError("Unauthorized");
   }
 
   if (req.user.role !== "ADMIN") {
-    res.status(403).json({error: "Admin access required"});
-    return;
+    throw new ForbiddenError("Admin access required");
   }
 
   next();

@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from "express";
+import { NotFoundError } from "../errors/ApiError";
 
 
 export const unknownRoutesHandler = (
   _req: Request,
-  res: Response,
+  _res: Response,
   _next: NextFunction
 ) => {
-  res.status(404).json({message: `Not Found`});
-  return;
+  throw new NotFoundError("Not Found");
 };

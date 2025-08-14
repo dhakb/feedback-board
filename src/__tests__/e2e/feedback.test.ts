@@ -9,7 +9,7 @@ import {
   loginTestAdmin
 } from "../utils/db";
 import { PrismaClient } from "../../../generated/prisma";
-import { TEST_USER, TEST_FEEDBACK } from "../utils/mocks";
+import { TEST_FEEDBACK } from "../utils/mocks";
 import { loginTestUser } from "../utils/db";
 import { generateUUID } from "../../utils/uuid";
 
@@ -85,6 +85,14 @@ describe("Feedback E2E", () => {
         .send(input);
 
       expect(res.status).toBe(401);
+      expect(res.body).toEqual(
+        expect.objectContaining({
+          status: "fail",
+          error: expect.objectContaining({
+            message: expect.any(String)
+          })
+        })
+      );
     });
 
     it("should return 400 if input is invalid", async () => {
@@ -142,6 +150,14 @@ describe("Feedback E2E", () => {
         .set("Authorization", `Bearer invalid-token`);
 
       expect(res.status).toBe(401);
+      expect(res.body).toEqual(
+        expect.objectContaining({
+          status: "fail",
+          error: expect.objectContaining({
+            message: expect.any(String)
+          })
+        })
+      );
     });
   });
 
@@ -409,7 +425,10 @@ describe("Feedback E2E", () => {
       expect(res.status).toBe(403);
       expect(res.body).toEqual(
         expect.objectContaining({
-          error: expect.any(String)
+          status: "fail",
+          error: expect.objectContaining({
+            message: expect.any(String)
+          })
         })
       );
     });

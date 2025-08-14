@@ -81,7 +81,14 @@ describe("Comment E2E", () => {
         .send(input);
 
       expect(res.status).toBe(401);
-      expect(res.body).toEqual(expect.objectContaining({error: "Unauthorized"}));
+      expect(res.body).toEqual(
+        expect.objectContaining({
+          status: "fail",
+          error: expect.objectContaining({
+            message: expect.any(String)
+          })
+        })
+      );
     });
 
     it("should return 400 if input is invalid", async () => {
